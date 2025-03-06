@@ -9,6 +9,6 @@ int main()
     cin.tie(NULL);
     cout.tie(NULL);
 
-    cout << "조민석" << '\n';
+    cout << "Hello" << '\n';
     return 0;
 }
