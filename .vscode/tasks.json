@@ -136,8 +136,8 @@
         // "-std=c++17", // c++ 버전
         "-fdiagnostics-color=always",
         "-g",
-        "${fileDirname}/*.c", // Window 모든 파일 컴파일 가능 cpp c 구분
-        //"${file}", // 하나의 파일만 컴파일 가능
+        //"${fileDirname}/*.c", // Window 모든 파일 컴파일 가능 cpp c 구분
+        "${file}", // 하나의 파일만 컴파일 가능
         "-o",
         "${fileDirname}/${fileBasenameNoExtension}.exe"
         // "-lncurses"
