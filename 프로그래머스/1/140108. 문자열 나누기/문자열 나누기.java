@@ -7,10 +7,10 @@ class Solution {
         int sameChar = 0;
         int diffChar = 0;
         char pointChar = '0';
-        for (int i = 0; i < s.length(); i++){
-            char ch = s.charAt(i);
+        for (char ch : s.toCharArray()){
             
             if (pointChar == '0'){
+                answer++;
                 pointChar = ch;
                 sameChar++;
                 continue;
@@ -25,16 +25,15 @@ class Solution {
             
             // check
             if (sameChar == diffChar){
-                answer++;
                 sameChar = 0;
                 diffChar = 0;
                 pointChar = '0';
             }
         }
         
-        if (sameChar != 0){
-            answer++;
-        }
+        // if (sameChar != 0){
+        //     answer++;
+        // }
         return answer;
     }
 }
