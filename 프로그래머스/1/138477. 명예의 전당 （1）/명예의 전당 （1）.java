@@ -4,23 +4,16 @@ class Solution {
     public List<Integer> solution(int k, int[] score) {
         List<Integer> answer = new ArrayList<>();
         
-        List<Integer> scoreList = new ArrayList<>();
+        PriorityQueue<Integer> pq = new PriorityQueue<>();
         
-        for (int daliyScore : score){
-            scoreList.add(daliyScore);
+        for (int i : score){
+            pq.offer(i);
             
-            Collections.sort(scoreList);
-            
-            if (scoreList.size() > k){
-                scoreList.remove(0);
+            if (pq.size() > k){
+                pq.poll();
             }
             
-            answer.add(scoreList.get(0));
-            
-            // for (int i : scoreList){
-            //     System.out.print(i + " ");
-            // }
-            // System.out.println();
+            answer.add(pq.peek());
         }
         return answer;
     }
