@@ -2,8 +2,6 @@ import java.util.*;
 
 class Solution {
     public String solution(String[] cards1, String[] cards2, String[] goal) {
-        String answer = "";
-        
         Queue<String> queue1 = new LinkedList<>();
         Queue<String> queue2 = new LinkedList<>();
         
@@ -24,16 +22,9 @@ class Solution {
                 queue2.poll();
                 continue;
             }
-            canMake = false;
-            break;
+            return "No";
         }
-        
-        if (canMake){
-            answer = "Yes";
-        }
-        else {
-            answer = "No";
-        }
-        return answer;
+
+        return "Yes";
     }
 }
