@@ -4,8 +4,9 @@ class Solution {
                 
         String[] nums = s.split(" ");
         
-        int max = Integer.parseInt(nums[0]);
-        int min = Integer.parseInt(nums[1]);
+        int max, min;
+        max = min = Integer.parseInt(nums[0]);
+        
         for (String num : nums){
             max = Math.max(max, Integer.parseInt(num));
             min = Math.min(min, Integer.parseInt(num));
