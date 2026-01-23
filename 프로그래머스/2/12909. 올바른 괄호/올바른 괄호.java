@@ -3,13 +3,11 @@ import java.util.*;
 class Solution {
     boolean solution(String s) {
         boolean answer = true;
-        Stack<Character> stack = new Stack<>();
-        
-        for (int i = 0; i < s.length(); i++){
-            char c = s.charAt(i);
-            
-            if (c == '('){
-                stack.push('(');
+
+        Stack<Integer> stack = new Stack<>();
+        for (char ch : s.toCharArray()){
+            if (ch == '('){
+                stack.push(0);
             }
             else {
                 if (!stack.isEmpty()){
@@ -17,15 +15,14 @@ class Solution {
                 }
                 else {
                     answer = false;
-                    break;
+                    return answer;
                 }
             }
         }
-        
+
         if (!stack.isEmpty()){
             answer = false;
         }
-
         return answer;
     }
 }
