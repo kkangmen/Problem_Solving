@@ -1,30 +1,31 @@
 import java.io.*;
 import java.util.*;
-    
-public class Main {
-    public static int m = 0;
-    public static boolean[] isUsed;
-    public static List<Point> house;
-    public static List<Point> chicken;
-    public static int answer = Integer.MAX_VALUE;
 
-    public static class Point{
-        private int x;
-        private int y;
+public class Main {
+    static int N, M;
+    static List<Point> house = new ArrayList<>();
+    static List<Point> chicken = new ArrayList<>();
+    static boolean[] isUsed;
+    static int[][] graph;
+    static int answer = Integer.MAX_VALUE;
+
+    public static class Point {
+        private final int x;
+        private final int y;
+
         public Point(int x, int y){
             this.x = x;
             this.y = y;
         }
     }
-    public static int calculate(){
+
+    public static int caculate(){
         int sum = 0;
         for (int i = 0; i < house.size(); i++){
             int temp = Integer.MAX_VALUE;
             for (int j = 0; j < chicken.size(); j++){
-                if(isUsed[j]){
-                    int distance = Math.abs(house.get(i).x - chicken.get(j).x) +
-                            Math.abs(house.get(i).y - chicken.get(j).y);
-                    temp = Math.min(distance, temp);
+                if (isUsed[j]){
+                    temp = Math.min(Math.abs(house.get(i).x - chicken.get(j).x) + Math.abs(house.get(i).y - chicken.get(j).y), temp);
                 }
             }
             sum += temp;
@@ -32,36 +33,33 @@ public class Main {
         return sum;
     }
 
-    public static void dfs(int count, int index){
-        if (count == m){
-            int distance = calculate();
-            answer = Math.min(distance, answer);
+    public static void btracking(int index, int count){
+        if (count == M){
+            answer = Math.min(answer, caculate());
             return;
         }
 
-        for (int i = index+1; i < isUsed.length; i++){
-            if (!isUsed[i]){
-                isUsed[i] = true;
-                dfs(count+1, i);
-                isUsed[i] = false;
-            }
+        if (index == chicken.size()){
+            return;
         }
+
+        isUsed[index] = true;
+        btracking(index + 1, count+1);
+        isUsed[index] = false;
+        btracking(index + 1, count);
     }
 
     public static void solution() throws IOException {
         BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
-        BufferedWriter bw = new BufferedWriter(new OutputStreamWriter(System.out));
         StringTokenizer st = new StringTokenizer(br.readLine());
 
-        int n = Integer.parseInt(st.nextToken());
-        m = Integer.parseInt(st.nextToken());
-        chicken = new ArrayList<>();
-        house = new ArrayList<>();
+        N = Integer.parseInt(st.nextToken());
+        M = Integer.parseInt(st.nextToken());
+        graph = new int[N][N];
 
-        int[][] graph = new int[n][n];
-        for (int i = 0; i < n; i++){
+        for (int i = 0; i < N; i++){
             st = new StringTokenizer(br.readLine());
-            for (int j = 0; j < n; j++){
+            for (int j = 0; j < N; j++){
                 graph[i][j] = Integer.parseInt(st.nextToken());
                 if (graph[i][j] == 1){
                     house.add(new Point(i, j));
@@ -71,15 +69,14 @@ public class Main {
                 }
             }
         }
-        isUsed = new boolean[chicken.size()];
 
-        dfs(0, -1);
+        isUsed = new boolean[chicken.size()];
+        btracking(0, 0);
 
         System.out.println(answer);
-        bw.flush();
-        bw.close();
         br.close();
     }
+
     public static void main(String[] args) throws IOException {
         solution();
     }
