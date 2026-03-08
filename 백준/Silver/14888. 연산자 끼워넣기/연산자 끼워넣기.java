@@ -3,72 +3,53 @@ import java.util.*;
     
 public class Main {
     static int N;
-    static int[] operator;
-    static int[] answer;
-    static StringBuilder sb = new StringBuilder();
-    static int[] num;
-    static int max = Integer.MIN_VALUE;
+    static int[] number;
+    static int[] operator = new int[4];
     static int min = Integer.MAX_VALUE;
+    static int max = Integer.MIN_VALUE;
 
-    public static int caculate(){
-        int index = 1;
-        int a = num[0];
-        for (int i = 0; i < N-1; i++) {
-            int b = num[index];
-            switch (answer[i]) {
-                case 0:
-                    a = a + b;
-                    break;
-                case 1:
-                    a = a - b;
-                    break;
-                case 2:
-                    a = a * b;
-                    break;
-                case 3:
-                    if (a < 0) {
-                        a = -(Math.abs(a) / b);
-                    } else {
-                        a = a / b;
-                    }
-                    break;
-            }
-            index++;
-        }
-        return a;
-    }
-
-    public static void dfs(int count){
+    public static void bruteForce(int count, int sum){
         if (count == N-1){
-            int ans = caculate();
-            max = Math.max(max, ans);
-            min = Math.min(min, ans);
+            min = Math.min(min, sum);
+            max = Math.max(max, sum);
             return;
         }
 
-
-        for (int i = 0; i < 4; i++){
-            if (operator[i] > 0){
-                operator[i]--;
-                answer[count] = i;
-                dfs(count+1);
-                operator[i]++;
+        if (operator[0] > 0){
+            operator[0]--;
+            bruteForce(count+1, sum + number[count+1]);
+            operator[0]++;
+        }
+        if (operator[1] > 0){
+            operator[1]--;
+            bruteForce(count+1, sum - number[count+1]);
+            operator[1]++;
+        }
+        if (operator[2] > 0){
+            operator[2]--;
+            bruteForce(count+1, sum * number[count+1]);
+            operator[2]++;
+        }
+        if (operator[3] > 0){
+            operator[3]--;
+            if (sum < 0){
+                bruteForce(count+1, -(Math.abs(sum) / number[count+1]));
             }
+            else {
+                bruteForce(count+1, sum / number[count+1]);
+            }
+            operator[3]++;
         }
     }
 
     public static void solution() throws IOException {
         BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
-        sb = new StringBuilder();
 
         N = Integer.parseInt(br.readLine());
-        num = new int[N];
-        answer = new int[N-1];
-        operator = new int[4];
-
+        number = new int[N];
         StringTokenizer st = new StringTokenizer(br.readLine());
         for (int i = 0; i < N; i++){
-            num[i] = Integer.parseInt(st.nextToken());
+            number[i] = Integer.parseInt(st.nextToken());
         }
 
         st = new StringTokenizer(br.readLine());
@@ -76,9 +57,8 @@ public class Main {
             operator[i] = Integer.parseInt(st.nextToken());
         }
 
-        dfs(0);
-        sb.append(max).append("\n").append(min);
-        System.out.println(sb.toString());
+        bruteForce(0, number[0]);
+        System.out.println(max + "\n" + min);
         br.close();
     }
     public static void main(String[] args) throws IOException {
