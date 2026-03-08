@@ -1,22 +1,22 @@
 import java.io.*;
 import java.util.*;
-
+    
 public class Main {
+    static int N;
     static int[] row;
     static boolean[] isUsed;
-    static int N;
-    static int answer;
-    public static boolean checkPossible(int count){
-        // 두 점의 위치가 대각선인 경우 성립x
+    static int answer = 0;
+
+    public static boolean isDiagnal(int count){
         for (int i = 0; i < count; i++){
             if (Math.abs(i - count) == Math.abs(row[i] - row[count])){
-                return false;
+                return true;
             }
         }
-        return true;
+        return false;
     }
 
-    public static void dfs(int count){
+    public static void backTracking(int count){
         if (count == N){
             answer++;
             return;
@@ -24,9 +24,9 @@ public class Main {
 
         for (int i = 0; i < N; i++){
             row[count] = i;
-            if (!isUsed[i] && checkPossible(count)){
+            if(!isUsed[i] && !isDiagnal(count)){
                 isUsed[i] = true;
-                dfs(count+1);
+                backTracking(count+1);
                 isUsed[i] = false;
             }
         }
@@ -39,11 +39,10 @@ public class Main {
         row = new int[N];
         isUsed = new boolean[N];
 
-        dfs(0);
+        backTracking(0);
         System.out.println(answer);
         br.close();
     }
-
     public static void main(String[] args) throws IOException {
         solution();
     }
