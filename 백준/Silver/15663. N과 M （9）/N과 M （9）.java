@@ -1,29 +1,29 @@
 import java.io.*;
 import java.util.*;
-
+    
 public class Main {
     static int N, M;
-    static int[] num;
+    static int[] number;
     static boolean[] isUsed;
-    static int[] answer;
+    static int[] answerList;
     static Set<String> set = new LinkedHashSet<>();
     static StringBuilder sb;
 
-    public static void backTracking(int count){
+    public static void bTracking(int count){
         if (count == M){
             sb = new StringBuilder();
-            for (int i = 0; i < M; i++){
-                sb.append(answer[i]).append(" ");
+            for (int i : answerList){
+                sb.append(i).append(" ");
             }
             set.add(sb.toString().trim());
             return;
         }
 
         for (int i = 0; i < N; i++){
-            if(!isUsed[i]){
+            if (!isUsed[i]){
                 isUsed[i] = true;
-                answer[count] = num[i];
-                backTracking(count + 1);
+                answerList[count] = number[i];
+                bTracking(count+1);
                 isUsed[i] = false;
             }
         }
@@ -35,18 +35,17 @@ public class Main {
 
         N = Integer.parseInt(st.nextToken());
         M = Integer.parseInt(st.nextToken());
-
-        num = new int[N];
+        number = new int[N];
         isUsed = new boolean[N];
-        answer = new int[M];
+        answerList = new int[M];
 
         st = new StringTokenizer(br.readLine());
         for (int i = 0; i < N; i++){
-            num[i] = Integer.parseInt(st.nextToken());
+            number[i] = Integer.parseInt(st.nextToken());
         }
 
-        Arrays.sort(num);
-        backTracking(0);
+        Arrays.sort(number);
+        bTracking(0);
 
         sb = new StringBuilder();
         for (String s : set){
@@ -55,7 +54,6 @@ public class Main {
         System.out.println(sb.toString().trim());
         br.close();
     }
-
     public static void main(String[] args) throws IOException {
         solution();
     }
