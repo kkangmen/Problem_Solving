@@ -1,0 +1,65 @@
+import java.io.*;
+import java.util.*;
+
+class Main {
+    public static void main(String[] args) throws Exception {
+        BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
+        int input = Integer.parseInt(br.readLine());
+
+        for (int round = 0; round < input; round ++){
+            List<Integer> list_A = new ArrayList<>();
+            List<Integer> list_B = new ArrayList<>();
+
+            String[] A = br.readLine().split(" ");
+            String[] B = br.readLine().split(" ");
+
+            for (int i = 0; i < A.length; i++){
+                list_A.add(Integer.parseInt(A[i]));
+            }
+            list_A.remove(0);
+
+            for (int i = 0; i < B.length; i++){
+                list_B.add(Integer.parseInt(B[i]));
+            }
+            list_B.remove(0);
+
+            // 별의 개수가 다를 경우
+            int countAStar = Collections.frequency(list_A, 4);
+            int countBStar = Collections.frequency(list_B, 4);
+
+            if (countAStar != countBStar){
+                String winner = countAStar > countBStar ? "A" : "B";
+                System.out.println(winner);
+                continue;
+            }
+
+            // 별의 개수가 같고 동그라미의 개수가 다를 경우
+            int countACircle = Collections.frequency(list_A, 3);
+            int countBCircle = Collections.frequency(list_B, 3);
+            if(countACircle != countBCircle){
+                String winner = countACircle > countBCircle ? "A" : "B";
+                System.out.println(winner);
+                continue;
+            }
+            // 별, 동그라미의 개수가 같고, 네모의 개수가 다를 경우
+            int countARect = Collections.frequency(list_A, 2);
+            int countBRect = Collections.frequency(list_B, 2);
+            if(countARect != countBRect){
+                String winner = countARect > countBRect ? "A" : "B";
+                System.out.println(winner);
+                continue;
+            }
+            // 별, 동그라미, 네모 개수가 같고, 세모의 개수가 다를 경우
+            int countATriangle = Collections.frequency(list_A, 1);
+            int countBTriangle = Collections.frequency(list_B, 1);
+            if(countATriangle != countBTriangle){
+                String winner = countATriangle > countBTriangle ? "A" : "B";
+                System.out.println(winner);
+                continue;
+            }
+
+            // 별, 동그라미, 네모, 세모의 개수가 모두 같을 경우
+            System.out.println("D");
+        }
+    }
+}
