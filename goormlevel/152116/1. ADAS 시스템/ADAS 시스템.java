@@ -1,3 +1,25 @@
+import java.io.*;
+import java.util.*;
+
+class Main {
+    static int w, h;
+    static String[][] map;
+    static boolean[][] isVisited;
+    static int[] dx = {-1, 0, 1, 0};
+    static int[] dy = {0, 1, 0, -1};
+    static int dangerScore = 0;
+    static PriorityQueue<Point> pq = new PriorityQueue<>((o1, o2) -> {
+        if (o1.priority == o2.priority){
+            if (o1.x == o2.x){
+                return Integer.compare(o1.y, o2.y);
+            }
+            return Integer.compare(o1.x, o2.x);
+        }
+        return Integer.compare(o1.priority, o2.priority);
+    });
+
+    public static class Point {
+        int x;
         int y;
         int priority;
         Point (int x, int y, int priority){
@@ -78,3 +100,26 @@
     }
 
     public static void main(String[] args) throws Exception {
+        BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
+
+        Point start = null;
+        String[] input = br.readLine().split(" ");
+        w = Integer.parseInt(input[0]);
+        h = Integer.parseInt(input[1]);
+
+        map = new String[w][h];
+        isVisited = new boolean[w][h];
+
+        for (int i = 0; i < w; i++){
+            String row = br.readLine();
+            for (int j = 0; j < h; j++){
+                map[i][j] = String.valueOf(row.charAt(j));
+                if (map[i][j].equals("S")){
+                    start = new Point(i, j, 0);
+                }
+            }
+        }
+
+        bfs(start);
+    }
+}
