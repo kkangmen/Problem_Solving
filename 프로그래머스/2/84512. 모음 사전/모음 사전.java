@@ -19,11 +19,6 @@ class Solution {
         int answer = 0;        
         dfs("", 0);
         
-        for (int i = 0; i < dictionary.size(); i++){
-            if (word.equals(dictionary.get(i))){
-                answer = i;
-            }
-        }
-        return answer;
+        return dictionary.indexOf(word);
     }
 }
