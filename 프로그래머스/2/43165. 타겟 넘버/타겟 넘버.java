@@ -1,24 +1,23 @@
 import java.util.*;
 
 class Solution {
-    public static int answer = 0;
     
-    public void dfs(int depth, int sum, int[] numbers, int target){
-        if (depth == numbers.length){
+    static int answer = 0;
+    public void pruning(int index, int sum, int length, int target, int[] numbers){
+        if (index == length){
             if (sum == target){
                 answer++;
             }
             return;
-        }    
+        }
         
-        dfs(depth+1, sum + numbers[depth], numbers, target);
-        
-        dfs(depth+1, sum - numbers[depth], numbers, target);
+        pruning(index+1, sum+numbers[index], length, target, numbers);
+        pruning(index+1, sum-numbers[index], length, target, numbers);
     }
     
     public int solution(int[] numbers, int target) {
         
-        dfs(0, 0, numbers, target);
+        pruning(0, 0, numbers.length, target, numbers);
         return answer;
     }
 }
