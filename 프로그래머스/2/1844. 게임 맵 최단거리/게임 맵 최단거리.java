@@ -1,58 +1,58 @@
 import java.util.*;
 
 class Solution {
-    public static int[][] graph;
-    public static int[] dx = {0, 1, 0, -1};
-    public static int[] dy = {1, 0, -1, 0};
-    public Queue<Point> queue = new LinkedList<>();
     
-    public class Point {
-        private int x;
-        private int y;
-        public Point(int x, int y){
+    int[][] distance;
+    Queue<Point> q = new LinkedList<>();
+    int[] dx = {0, 1, 0, -1};
+    int[] dy = {1, 0, -1, 0};
+    
+    class Point {
+        int x;
+        int y;
+        Point (int x, int y){
             this.x = x;
             this.y = y;
         }
     }
     
     public void bfs(int x, int y, int[][] maps){
-        queue.offer(new Point(x, y));
-        graph[x][y] = 1;
+        distance[x][y] = 1;
+        q.offer(new Point(x, y));
         
-        while (!queue.isEmpty()){
-            Point p = queue.poll();
-            int cx = p.x;
-            int cy = p.y;
+        while (!q.isEmpty()){
+            Point p = q.poll();
             for (int i = 0; i < 4; i++){
-                int nx = cx + dx[i];
-                int ny = cy + dy[i];
-            
-                if (0 <= nx && nx < graph.length && 0 <= ny && ny < graph[0].length){
-                    if (maps[nx][ny] == 1 && graph[nx][ny] == 0){
-                        queue.offer(new Point(nx, ny));
-                        graph[nx][ny] = graph[cx][cy] + 1;
+                int nx = p.x + dx[i];
+                int ny = p.y + dy[i];
+                
+                if (0 <= nx && nx < maps.length && 0 <= ny && ny < maps[0].length){
+                    if (maps[nx][ny] == 1 && distance[nx][ny] == 0){
+                        q.offer(new Point(nx, ny));
+                        distance[nx][ny] = distance[p.x][p.y] + 1;
                     }
                 }
+                
             }
         }
-        
     }
-    
-    public int solution(int[][] maps) {
-        int answer = 0;
-        graph = new int[maps.length][maps[0].length];
         
+    public int solution(int[][] maps) {        
+        // 배열 선언
+        distance = new int[maps.length][maps[0].length];
+        
+        // bfs
         bfs(0, 0, maps);
         
-        if (graph[maps.length-1][maps[0].length-1] == 0){
+        int answer = distance[maps.length-1][maps[0].length-1];
+        if (answer == 0){
             return -1;
         }
         
-        answer = graph[maps.length-1][maps[0].length-1];
-        
+        // 출력
         // for (int i = 0; i < maps.length; i++){
         //     for (int j = 0; j < maps[0].length; j++){
-        //         System.out.print(graph[i][j]);
+        //         System.out.print(distance[i][j] + " ");
         //     }
         //     System.out.println();
         // }
