@@ -2,36 +2,34 @@ import java.util.*;
 
 class Solution {
     
-    Map<String, Integer> dictionary = new HashMap<>();
-    int index = 1;
-    String word = "";
-    int findIndex = 0;
+    static Map<String, Integer> dictionary = new HashMap<>();
+    static int index = 0;
     
     public List<Integer> solution(String msg) {
         List<Integer> answer = new ArrayList<>();
         
         for (char ch = 'A'; ch <= 'Z'; ch++){
-            dictionary.put(String.valueOf(ch), index++);
+            dictionary.put(String.valueOf(ch), ++index);
         }
         
-        for (int i = 0; i < msg.length(); i++){
-            word += msg.charAt(i);
+        for (int i = 0; i < msg.length(); ){
             
-            // 사전에 해당 단어가 없다면 추가
-            if (!dictionary.containsKey(word)){
-                dictionary.put(word, index++);  
-                // System.out.println(findIndex);
-                answer.add(findIndex);
-                word = "";
-                i--;
-            } else {
-                findIndex = dictionary.get(word);
+            String word = String.valueOf(msg.charAt(i));
+            int nxtIdx = i+1;
+            
+            while (nxtIdx < msg.length() && dictionary.containsKey(word + msg.charAt(nxtIdx))){
+                word += msg.charAt(nxtIdx);
+                nxtIdx++;
             }
+            
+            answer.add(dictionary.get(word));
+            
+            if (nxtIdx < msg.length()){
+                dictionary.put(word + msg.charAt(nxtIdx), ++index);
+            }
+            
+            i = nxtIdx;
         }
-        
-        // 마지막 문자
-        // System.out.println(findIndex);
-        answer.add(findIndex);
         return answer;
     }
 }
