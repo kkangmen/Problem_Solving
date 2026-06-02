@@ -1,24 +1,35 @@
 import java.util.*;
 
 class Solution {
-    private static List<String> dictionary = new LinkedList<>();
-    private static String[] vowel = {"A", "E", "I", "O", "U"};
     
-    public void dfs(String s, int depth){
-        dictionary.add(s);
-        if (s.length() == 5){
+    static String[] vowels = {"A", "E", "I", "O", "U"};
+    static String[] words = new String[5];
+    static List<String> wordsOrder = new ArrayList<>();
+    
+    public void bF(int count){
+        
+        StringBuilder sb = new StringBuilder();
+        for (int i = 0; i < count; i++){
+            sb.append(words[i]);
+        }
+        wordsOrder.add(sb.toString());
+        
+        if (count == 5){
             return;
         }
         
         for (int i = 0; i < 5; i++){
-            dfs(s + vowel[i], depth+1);
+            words[count] = vowels[i];
+            bF(count+1);
         }
     }
     
-    public int solution(String word) {
-        int answer = 0;        
-        dfs("", 0);
+    public int solution(String word) {    
+        int answer = 0;
         
-        return dictionary.indexOf(word);
+        bF(0);
+        
+        answer = wordsOrder.indexOf(word);
+        return answer;
     }
 }
