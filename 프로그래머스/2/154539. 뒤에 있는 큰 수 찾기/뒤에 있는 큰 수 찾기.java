@@ -1,33 +1,23 @@
 import java.util.*;
 
 class Solution {
-    private static Stack<Point> stack = new Stack();
     
-    private class Point {
-        int index;
-        int number;
-        Point(int index, int number){
-            this.index = index;
-            this.number = number;
-        }
-    }
+    static Stack<Integer> s = new Stack<>();
     
     public int[] solution(int[] numbers) {
         int[] answer = new int[numbers.length];
         
-        stack.push(new Point(0, numbers[0]));
+        s.push(0);
+        
         for (int i = 1; i < numbers.length; i++){
-            while (!stack.isEmpty() && stack.peek().number < numbers[i]){
-                answer[stack.peek().index] = numbers[i];
-                stack.pop();
+            while (!s.isEmpty() && numbers[s.peek()] < numbers[i]){
+                answer[s.pop()] = numbers[i];
             }
-            stack.push(new Point(i, numbers[i]));
+            s.push(i);
         }
-                   
-        for (int i = 0; i < answer.length; i++){
-            if (answer[i] == 0){
-                answer[i] = -1;
-            }
+        
+        while (!s.isEmpty()){
+            answer[s.pop()] = -1;
         }
         return answer;
     }
