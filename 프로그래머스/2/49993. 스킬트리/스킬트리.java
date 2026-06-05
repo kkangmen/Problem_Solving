@@ -5,20 +5,14 @@ class Solution {
         int answer = 0;
         
         for (String s : skill_trees){
-            String replacedWord = s.replaceAll("[^" + skill + "]", "");
-            // System.out.println(replacedWord);
+            s = s.replaceAll("[^"+skill+"]", "");
             
             for (int i = 0; i <= skill.length(); i++){
-                if (replacedWord.equals(skill.substring(0, i))){
+                if (s.equals(skill.substring(0, i))){
                     answer += 1;
-                    break;
                 }
             }
         }
-        
-        // for (String s : skill_trees){
-        //     System.out.println(s);
-        // }
         return answer;
     }
 }
