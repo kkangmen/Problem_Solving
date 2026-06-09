@@ -1,14 +1,13 @@
 import java.util.*;
 
 class Solution {
-    
     static int[] arr;
-    static boolean[] isUsed;
     static int[] num;
-    static Set<Integer> numberSet = new HashSet<>();
+    static boolean[] isUsed;
+    static Set<Integer> set = new HashSet<>();
     
     public boolean isPrimeNum(int num){
-        if (num == 0 || num == 1){
+        if (num <=1 ){
             return false;
         }
         
@@ -20,21 +19,21 @@ class Solution {
         return true;
     }
     
-    public void bF(int count, int max, int[] num){
+    public void bruteForce(int count, int max, int length){
         if (count == max){
             StringBuilder sb = new StringBuilder();
             for (int i = 0; i < max; i++){
                 sb.append(String.valueOf(num[i]));
             }
-            numberSet.add(Integer.parseInt(sb.toString())); 
+            set.add(Integer.parseInt(sb.toString()));
             return;
         }
         
-        for (int i = 0; i < arr.length; i++){
+        for (int i = 0; i < length; i++){
             if(!isUsed[i]){
                 isUsed[i] = true;
                 num[count] = arr[i];
-                bF(count + 1, max, num);
+                bruteForce(count+1, max, length);
                 isUsed[i] = false;
             }
         }
@@ -43,20 +42,20 @@ class Solution {
     public int solution(String numbers) {
         int answer = 0;
         arr = new int[numbers.length()];
-        isUsed = new boolean[numbers.length()];
         
         for (int i = 0; i < numbers.length(); i++){
-            arr[i] = numbers.charAt(i)-'0';
+            arr[i] = Integer.parseInt(String.valueOf(numbers.charAt(i)));
         }
         
         for (int i = 1; i <= numbers.length(); i++){
+            isUsed = new boolean[numbers.length()];
             num = new int[i];
-            bF(0, i, num);
+            bruteForce(0, i, numbers.length());
         }
         
-        for (int i : numberSet){
-            if (isPrimeNum(i)){
-                answer += 1;
+        for (int i : set){
+            if(isPrimeNum(i)){
+                answer++;
             }
         }
         return answer;
