@@ -1,64 +1,55 @@
 import java.util.*;
 
 class Solution {
-    
     class File {
-        String originalName;
         String head;
-        String number;
-        
-        File (String originalName, String head, String number){
-            this.originalName = originalName;
+        int number;
+        String origin;
+        File (String head, int number, String origin){
             this.head = head;
             this.number = number;
+            this.origin = origin;
         }
     }
     
+    List<File> orderFileList = new ArrayList<>();
     
     public List<String> solution(String[] files) {
         List<String> answer = new ArrayList<>();
-        List<File> list = new ArrayList<>();
         
-        for (int i = 0; i < files.length; i++){
-            String fileName = files[i];
-            
+        for (String s : files){
             StringBuilder head = new StringBuilder();
             StringBuilder number = new StringBuilder();
-            StringBuilder tail = new StringBuilder();
-            int index = 0;
-            int maxIndex = fileName.length();
+            boolean change = false;
             
-            while (index < maxIndex && (fileName.charAt(index) < '0' || fileName.charAt(index) > '9')){
-                head.append(String.valueOf(fileName.charAt(index)));
-                index++;
+            for (char ch : s.toCharArray()){
+                if ((ch < '0' || ch > '9') && !change){
+                    head.append(String.valueOf(ch));
+                    continue;
+                }
+                
+                if ((ch >= '0' && ch <= '9')){
+                    change = true;
+                    number.append(String.valueOf(ch));
+                } else {
+                    break;
+                }
             }
-            
-            int numCount = 0;
-            while (index < maxIndex && '0' <= fileName.charAt(index) && fileName.charAt(index) <= '9' && numCount < 5){
-                number.append(String.valueOf(fileName.charAt(index)));
-                index++;
-                numCount++;
-            }
-            
-            // System.out.println("head= "+ head.toString().toLowerCase());
-            // System.out.println("number= "+ Integer.parseInt(number.toString()));
-            
-            list.add(new File(fileName, head.toString(), number.toString()));
+            orderFileList.add(new File(head.toString().toLowerCase(), Integer.parseInt(number.toString()), s));
+            // System.out.println(head.toString().toLowerCase());
+            // System.out.println(Integer.parseInt(number.toString()));
+            // System.out.println(s);
         }
         
-        Collections.sort(list, (File o1, File o2) -> {
-           if (o1.head.toLowerCase().equals(o2.head.toLowerCase())){
-               return Integer.parseInt(o1.number) - Integer.parseInt(o2.number);
-           }
-        
-            return o1.head.toLowerCase().compareTo(o2.head.toLowerCase());
+        Collections.sort(orderFileList, (o1, o2) -> {
+            if (o1.head.equals(o2.head)){
+                return o1.number - o2.number;
+            }
+            return o1.head.compareTo(o2.head);
         });
         
-        for (File f : list){
-            String head = f.head;
-            String number = f.number;
-            
-            answer.add(f.originalName);
+        for (File f : orderFileList){
+            answer.add(f.origin);
         }
         return answer;
     }
