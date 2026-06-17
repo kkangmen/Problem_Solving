@@ -2,61 +2,77 @@ import java.util.*;
 
 class Solution {
     
+    String[][] boards;
+    int[][] checked;
+    
+    public boolean checkChanged(){
+        
+        boolean flag = true;
+        
+        for (int i = 0; i < boards.length-1; i++){
+            for (int j = 0; j < boards[0].length-1; j++){
+                String s = boards[i][j];
+                
+                if (s.equals("-")){
+                    continue;
+                }
+                
+                if (boards[i][j+1].equals(s) && 
+                   boards[i+1][j].equals(s) &&
+                   boards[i+1][j+1].equals(s)){
+                    checked[i][j] = 1;
+                    checked[i][j+1] = 1;
+                    checked[i+1][j] = 1;
+                    checked[i+1][j+1] = 1;
+                    
+                    flag = false;
+                }
+            }   
+        }
+        
+        return flag;
+    }
+    
     public int solution(int m, int n, String[] board) {
         int answer = 0;
         
-        // 초기화
-        String[][] map = new String[m][n];
+        boards = new String[m][n];
+        checked = new int[m][n];
+        
         for (int i = 0; i < board.length; i++){
             String s = board[i];
             for (int j = 0; j < s.length(); j++){
-                map[i][j] = String.valueOf(s.charAt(j));
+                boards[i][j] = String.valueOf(s.charAt(j));
             }
         }
         
-        
         while (true){
-            boolean flag = true;
-            boolean[][] check = new boolean[m][n];
+            checked = new int[m][n];
             
-            for (int i = 0; i < m-1; i++){
-                for (int j = 0; j < n-1; j++){
-                    String s = map[i][j];
-                    if (s.equals("-")){
-                        continue;
-                    }
-                    if (map[i][j+1].equals(s) && map[i+1][j+1].equals(s) && map[i+1][j].equals(s)){
-                        check[i][j] = true;
-                        check[i][j+1] = true;
-                        check[i+1][j+1] = true;
-                        check[i+1][j] = true;
-                        flag = false;
-                    }
-                }
-            }
+            boolean endFlag = checkChanged();
             
-            if (flag){
+            if (endFlag){
                 break;
             }
             
-            // 지운 것 표시
+            // checked에 1이라면 문자 "-"로 바꾸기
             for (int i = 0; i < m; i++){
                 for (int j = 0; j < n; j++){
-                    if (check[i][j]){
+                    if (checked[i][j] == 1){
+                        boards[i][j] = "-";
                         answer += 1;
-                        map[i][j] = "-";
                     }
                 }
             }
-            // 스왑
+            
+            // 위치 바꾸기
             for (int j = 0; j < n; j++){
-                for (int i = m-1; i >= 0; i--){
-                    if (map[i][j].equals("-")){
+                for (int i = m -1; i >= 0; i--){
+                    if (boards[i][j].equals("-")){
                         for (int k = i-1; k >= 0; k--){
-                            if (!map[k][j].equals("-")){
-                                String temp = map[k][j];
-                                map[k][j] = map[i][j];
-                                map[i][j] = temp;
+                            if (!boards[k][j].equals("-")){
+                                boards[i][j] = boards[k][j];
+                                boards[k][j] = "-";
                                 break;
                             }
                         }
