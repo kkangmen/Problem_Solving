@@ -1,21 +1,21 @@
 import java.util.*;
 
 class Solution {
-    
-    static Stack<Integer> belt = new Stack<>();
+    Stack<Integer> stack = new Stack<>();
     
     public int solution(int[] order) {
-        int answer = 0;
+        List<Integer> answer = new ArrayList<>();
         
+        int index = 0;
         for (int i = 1; i <= order.length; i++){
-            belt.push(i);
+            stack.push(i);
             
-            while (!belt.isEmpty() && belt.peek() == order[answer]){
-                answer++;
-                belt.pop();
+            while (!stack.isEmpty() && order[index] == stack.peek()){
+                answer.add(stack.pop());
+                index++;
             }
         }
         
-        return answer;
+        return answer.size();
     }
 }
