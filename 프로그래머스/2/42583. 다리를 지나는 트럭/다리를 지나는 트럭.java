@@ -1,30 +1,33 @@
 import java.util.*;
 
 class Solution {
-
+    
+    Queue<Integer> bridge = new LinkedList<>();
+    Queue<Integer> q = new LinkedList<>();
+    
     public int solution(int bridge_length, int weight, int[] truck_weights) {
         int time = 0;
-        int tBW = 0;
-        int idx = 0;
-        Queue<Integer> bridge = new LinkedList<>();
         
-        while (idx < truck_weights.length){
-            int cTW = truck_weights[idx];
+        for (int i : truck_weights){
+            q.offer(i);
+        }
+        
+        int tBW = 0;
+        while (!q.isEmpty()){
             
-            // 다리가 다 찼다면 빼고 시작
+            // brideg에 자리가 없으면 빼고 시작.
             if (bridge.size() == bridge_length){
                 tBW -= bridge.poll();
             }
             
-            // 다리에 들어올 수 있다면
-            if (tBW + cTW <= weight){
-                bridge.offer(cTW);
-                tBW += cTW;
-                idx++;
-            } else {
+            if (tBW + q.peek() <= weight){
+                bridge.offer(q.peek());
+                tBW += q.poll();
+                time++;
+            } else { // 자리가 있는데 무게 초과일 경우
                 bridge.offer(0);
+                time++;
             }
-            time++;
         }
         
         return time + bridge_length;
