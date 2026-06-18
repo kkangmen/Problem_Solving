@@ -2,19 +2,22 @@ import java.util.*;
 
 class Solution {
     public String solution(String number, int k) {
-        StringBuilder sb = new StringBuilder();
-        int bigIdx = 0;
+        StringBuilder answer = new StringBuilder();
         
+        int firstIdx = 0;
         for (int i = 0; i < number.length()-k; i++){
-            char max = '0';
-            for (int j = bigIdx; j <= i+k; j++){
-                if (max < number.charAt(j)){
-                    max = number.charAt(j);
-                    bigIdx = j+1;
+            
+            int max = -1;
+            for (int j = firstIdx; j <= i+k; j++){
+                int num = number.charAt(j)-'0';
+                if (max < num){
+                    max = num;
+                    firstIdx = j+1;
                 }
             }
-            sb.append(String.valueOf(max));
+            
+            answer.append(String.valueOf(number.charAt(firstIdx-1)));
         }
-        return sb.toString();
+        return answer.toString();
     }
 }
