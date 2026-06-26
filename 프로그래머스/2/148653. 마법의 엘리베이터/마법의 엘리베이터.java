@@ -5,24 +5,19 @@ class Solution {
         int answer = 0;
         
         while (storey > 0){
-            int remain = storey%10;
-            storey /= 10;
+            int remain = storey % 10; // 5
+            storey /= 10; // 25
             
-            // 나머지가 5인 경우
-            if (remain == 5){
-                // 그 다음 숫자가 5이상이라면
-                if (storey%10 >= 5){
-                    storey += 1;
-                }
+            if (remain < 5){
                 answer += remain;
-            }
-            // 나머지가 5초과인 경우
-            else if (remain > 5){
-                answer += 10 - remain;
+            } else if (remain > 5){
                 storey += 1;
-            }
-            else {
-                answer += remain;
+                answer += 10 - remain;
+            } else { // 나머지가 5인 경우
+                if (storey % 10 >= 5){
+                    storey += 1;
+                } 
+                answer += 5;
             }
         }
         return answer;
