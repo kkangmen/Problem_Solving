@@ -2,48 +2,41 @@ import java.util.*;
 
 class Solution {
     
-    Map<Integer, Long> map = new LinkedHashMap<>();
-    List<Integer> list;
-    long answer = 0;
+    HashMap<Integer, Integer> map = new LinkedHashMap<>();
     
-    public void gcp(int num1, int num2){
-        int a = num1;
-        int b = num2;
-        
-        while (b != 0){
-            int temp = a % b;
-            a = b;
-            b = temp;
+    public boolean isPossible(int i, int j){
+        if ((i*3 == j*2) || (i*2 == j) || (i*4 == j*3)){
+            return true;
         }
-        if ((num1 / a == 2 && num2 / a == 3) ||
-            (num1 / a == 1 && num2 / a == 2) ||
-            (num1 / a == 3 && num2 / a == 4)){
-            answer += map.get(num1) * map.get(num2);
-        }
-
+        return false;
     }
     
     public long solution(int[] weights) {
+        long answer = 0;
         
         Arrays.sort(weights);
         
         for (int i : weights){
-            map.put(i, map.getOrDefault(i, 0L) + 1L);
+            map.put(i, map.getOrDefault(i, 0) + 1);
         }
         
-        list = new ArrayList<>(map.keySet());
+        List<Integer> list = new ArrayList<>(map.keySet());
         
-        for (int i = 0; i < list.size()-1; i++){
-            for (int j = i+1; j < list.size(); j++){
-                int num1 = list.get(i);
-                int num2 = list.get(j);
-            
-                gcp(num1, num2);
+        for (int i : map.keySet()){
+            int num = map.get(i);
+            if (num > 1){
+                answer += (long)num*(num-1)/2;
             }
         }
         
-        for (long num : map.values()){
-            answer += num*(num-1)/2;
+        for (int i = 0; i < list.size()-1; i++){
+            for (int j = i+1; j < list.size(); j++){
+                int weight1 = list.get(i);
+                int weight2 = list.get(j);
+                if (isPossible(weight1, weight2)){
+                    answer += (long)map.get(weight1)*(long)map.get(weight2);
+                }
+            }
         }
         return answer;
     }
