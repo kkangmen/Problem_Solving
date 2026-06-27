@@ -2,83 +2,92 @@ import java.util.*;
 
 class Solution {
     
-    String[][] boards;
-    int[][] checked;
+    String[][] map;
+    int[][] changed;
     
-    public boolean checkChanged(){
-        
-        boolean flag = true;
-        
-        for (int i = 0; i < boards.length-1; i++){
-            for (int j = 0; j < boards[0].length-1; j++){
-                String s = boards[i][j];
-                
+    public void changeLocate(){
+        for (int j = 0; j < map[0].length; j++){
+            for (int i = map.length-1; i >= 0; i--){
+                if (map[i][j].equals("-")){
+                    for (int k = i-1; k >= 0; k--){
+                        if (!map[k][j].equals("-")){
+                            map[i][j] = map[k][j];
+                            map[k][j] = "-";
+                            break;
+                        }
+                    }
+                }
+            }
+        }
+    }
+    
+    public int countOne(){
+        int count = 0;
+        for (int i = 0; i < changed.length; i++){
+            for (int j = 0; j < changed[0].length; j++){
+                if (changed[i][j] == 1){
+                    map[i][j] = "-";
+                    count++;
+                }
+            }
+        }
+        return count;
+    }
+    
+    public boolean hasToChange(){
+        boolean flag = false;
+        for (int i = 0; i < map.length-1; i++){
+            for (int j = 0; j < map[0].length-1; j++){
+                String s = map[i][j];
                 if (s.equals("-")){
                     continue;
                 }
                 
-                if (boards[i][j+1].equals(s) && 
-                   boards[i+1][j].equals(s) &&
-                   boards[i+1][j+1].equals(s)){
-                    checked[i][j] = 1;
-                    checked[i][j+1] = 1;
-                    checked[i+1][j] = 1;
-                    checked[i+1][j+1] = 1;
-                    
-                    flag = false;
+                if (map[i][j+1].equals(s) &&
+                   map[i+1][j].equals(s) &&
+                   map[i+1][j+1].equals(s)){
+                    flag = true;
+                    changed[i][j] = 1;
+                    changed[i][j+1] = 1;
+                    changed[i+1][j] = 1;
+                    changed[i+1][j+1] = 1;
                 }
-            }   
+            }
         }
-        
         return flag;
     }
     
     public int solution(int m, int n, String[] board) {
         int answer = 0;
         
-        boards = new String[m][n];
-        checked = new int[m][n];
-        
+        // 초기화
+        map = new String[board.length][board[0].length()];    
         for (int i = 0; i < board.length; i++){
             String s = board[i];
             for (int j = 0; j < s.length(); j++){
-                boards[i][j] = String.valueOf(s.charAt(j));
+                map[i][j] = String.valueOf(s.charAt(j));
             }
         }
         
         while (true){
-            checked = new int[m][n];
             
-            boolean endFlag = checkChanged();
+            changed = new int[board.length][board[0].length()];
             
-            if (endFlag){
-                break;
-            }
+            // 더 이상 없어지는 게 없다면
+            if (!hasToChange()) break;
             
-            // checked에 1이라면 문자 "-"로 바꾸기
-            for (int i = 0; i < m; i++){
-                for (int j = 0; j < n; j++){
-                    if (checked[i][j] == 1){
-                        boards[i][j] = "-";
-                        answer += 1;
-                    }
-                }
-            }
+            // 1 개수 세기
+            answer += countOne();
             
-            // 위치 바꾸기
-            for (int j = 0; j < n; j++){
-                for (int i = m -1; i >= 0; i--){
-                    if (boards[i][j].equals("-")){
-                        for (int k = i-1; k >= 0; k--){
-                            if (!boards[k][j].equals("-")){
-                                boards[i][j] = boards[k][j];
-                                boards[k][j] = "-";
-                                break;
-                            }
-                        }
-                    }
-                }
-            }
+            // 자리 바꾸기
+            changeLocate();
+            
+//             for (int i = 0; i < map.length; i++){
+//                 for (int j = 0; j < map[0].length; j++){
+//                     System.out.print(map[i][j]);
+//                 }
+//                 System.out.println();
+//             }
         }
         return answer;
     }
