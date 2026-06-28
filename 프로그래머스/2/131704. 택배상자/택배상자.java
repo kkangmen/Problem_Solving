@@ -1,21 +1,19 @@
 import java.util.*;
 
 class Solution {
-    Stack<Integer> stack = new Stack<>();
+    
+    Stack<Integer> s = new Stack();
     
     public int solution(int[] order) {
-        List<Integer> answer = new ArrayList<>();
-        
         int index = 0;
         for (int i = 1; i <= order.length; i++){
-            stack.push(i);
+            s.push(i);
             
-            while (!stack.isEmpty() && order[index] == stack.peek()){
-                answer.add(stack.pop());
+            while (!s.isEmpty() && s.peek() == order[index]){
+                s.pop();
                 index++;
             }
         }
-        
-        return answer.size();
+        return index;
     }
 }
