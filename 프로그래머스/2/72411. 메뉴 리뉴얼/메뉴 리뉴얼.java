@@ -1,44 +1,58 @@
 import java.util.*;
 
 class Solution {
-    public void dfs(String order, String current, int index, int length, Map<String, Integer> map){
-        if (current.length() == length){
-            map.put(current, map.getOrDefault(current, 0) + 1);
+    
+    public void bTracking(String curWord, String word, int index, int endCount, Map<String,Integer> dictionary){
+        if (curWord.length() == endCount){
+            // System.out.println(curWord);
+            dictionary.put(curWord, dictionary.getOrDefault(curWord, 0) + 1);
             return;
         }
         
-        for (int i = index; i < order.length(); i++){
-            dfs(order, current + order.charAt(i), i + 1, length, map);
+        for (int i = index; i < word.length(); i++){
+            bTracking(curWord + word.charAt(i), word, i+1, endCount, dictionary);
         }
     }
     
-    public List<String> solution(String[] orders, int[] course) {
+    public  List<String> solution(String[] orders, int[] course) {
         List<String> answer = new ArrayList<>();
         
         for (int i = 0; i < orders.length; i++){
-            char[] charArray = orders[i].toCharArray();
-            Arrays.sort(charArray);
-            orders[i] = String.valueOf(charArray);
+            String s = orders[i];
+            char[] sArray = s.toCharArray();
+            
+            Arrays.sort(sArray);
+            
+            orders[i] = new String(sArray);
         }
         
-        for (int len : course){
-            Map<String, Integer> map = new HashMap<>();
+        for (int i = 0; i < course.length; i++){
+            int endCount = course[i]; // 2
             
-            for (String order : orders){
-                dfs(order, "", 0, len, map);
+            // 백트래킹 시작
+            Map<String, Integer> dictionary = new HashMap<>();
+            
+            for (int j = 0; j < orders.length; j++){
+                bTracking("", orders[j], 0, endCount, dictionary);
             }
             
-            int maxCount = 0;
-            for (int count : map.values()){
-                maxCount = Math.max(maxCount, count);
+            // 가장 많이 주문된 메뉴
+            int max = 0;
+            for (String menu : dictionary.keySet()){
+                int count = dictionary.get(menu);
+                if (max <= count){
+                    max = count;
+                }
             }
             
-            if (maxCount >= 2){
-                for (String s : map.keySet()){
-                    if (map.get(s) == maxCount){
-                        answer.add(s);
-                    }
-                }                
+            // 2개 이상만 정답
+            if (max == 1){
+                continue;
+            }
+            for (String menu : dictionary.keySet()){
+                if (dictionary.get(menu) == max){
+                    answer.add(menu);
+                }
             }
         }
         
