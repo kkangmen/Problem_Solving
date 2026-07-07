@@ -2,76 +2,82 @@ import java.util.*;
 
 class Solution {
     
-    String[][] map;
+    String[][] graph;
     int[][] distance;
-    int[] dx = {0, 1, 0 ,-1};
+    int[] dx = {0, 1, 0, -1};
     int[] dy = {1, 0, -1, 0};
-    int startX, startY = 0;
-    int goalX, goalY = 0;
-    int answer = 0;
-    Queue<int[]> q = new LinkedList<>();
-    
-    public void bfs(int x, int y){
-        q.offer(new int[]{x, y});
+    Queue<int[]> queue = new LinkedList<>();
+    int row = 0;
+    int col = 0;
+    public void bfs(int[] start){
+        int x = start[0];
+        int y = start[1];
         distance[x][y] = 0;
+        queue.offer(start);
         
-        while (!q.isEmpty()){
-            int[] locate = q.poll();
+        while(!queue.isEmpty()){
+            int[] curNode = queue.poll();
+            
             for (int i = 0; i < 4; i++){
-                int nx = locate[0];
-                int ny = locate[1];
-                while (true){
+                int nx = curNode[0];
+                int ny = curNode[1];
+                
+                // 장애물이 나타나거나 맵 끝까지 갈때까지
+                while ((0 <= nx+dx[i] && nx+dx[i] < row &&
+                      0 <= ny+dy[i] && ny+dy[i] < col) &&
+                    (!graph[nx+dx[i]][ny+dy[i]].equals("D"))){
                     nx += dx[i];
                     ny += dy[i];
-                    if ((0 <= nx && nx < map.length && 0 <= ny && ny < map[0].length) &&
-                       (!map[nx][ny].equals("D"))){
-                        continue;
-                    } else {
-                        nx -= dx[i];
-                        ny -= dy[i];
-                        break;
-                    }
                 }
+                
                 if (distance[nx][ny] == -1){
-                    q.offer(new int[]{nx, ny});
-                    distance[nx][ny] = distance[locate[0]][locate[1]] + 1;
+                    queue.offer(new int[]{nx, ny});
+                    distance[nx][ny] = distance[curNode[0]][curNode[1]] + 1;
                 }
-            }   
+            }
         }
     }
     
     public int solution(String[] board) {
-        // init
-        int row = board.length;
-        int col = board[0].length();
-        map = new String[row][col];
+        int answer = 0;
+        int[] start = new int[2];
+        int[] goal = new int[2];
+        // 그래프 초기화
+        row = board.length;
+        col = board[0].length();
+        graph = new String[row][col];
         distance = new int[row][col];
         for (int i = 0; i < board.length; i++){
-            for (int j = 0; j < board[i].length(); j++){
-                map[i][j] = String.valueOf(board[i].charAt(j));
-                if (map[i][j].equals("R")){
-                    startX = i;
-                    startY = j;
-                }
-                if (map[i][j].equals("G")){
-                    goalX = i;
-                    goalY = j;
+            String s = board[i];
+            for (int j = 0; j < s.length(); j++){
+                graph[i][j] = String.valueOf(s.charAt(j));
+                if (graph[i][j].equals("R")){
+                    start = new int[]{i, j};
+                } else if (graph[i][j].equals("G")){
+                    goal = new int[]{i, j};
                 }
             }
         }
-        for (int i = 0; i < row; i++){
+        for (int i = 0; i< row; i++){
             Arrays.fill(distance[i], -1);
         }
-
-        // dfs
-        bfs(startX, startY);
+        // bfs 시작
+        bfs(start);
         
-        // for (int i = 0; i < distance.length; i++){
-        //     for (int j = 0; j < distance[0].length; j++){
+        // for (int i = 0; i < row; i++){
+        //     for (int j= 0; j < col; j++){
+        //         System.out.print(graph[i][j] + " ");
+        //     }
+        //     System.out.println();
+        // }
+        // System.out.println(start[0] + " " +  start[1]);
+        
+        // for (int i = 0; i < row; i++){
+        //     for (int j = 0; j < col; j++){
         //         System.out.print(distance[i][j] + " ");
         //     }
         //     System.out.println();
         // }
-        return distance[goalX][goalY];
+        return distance[goal[0]][goal[1]];
     }
 }
