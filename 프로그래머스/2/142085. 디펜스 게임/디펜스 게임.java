@@ -1,28 +1,29 @@
 import java.util.*;
-
 class Solution {
+    
+    Queue<Integer> pq = new PriorityQueue<>(Collections.reverseOrder());
+    
     public int solution(int n, int k, int[] enemy) {
-        int answer = enemy.length;
+        int answer = 0;
         
-        Queue<Integer> pq = new PriorityQueue<>(Collections.reverseOrder());
-        
-        int soldier = n;
-        int pass = k;
-        for (int i = 0; i < enemy.length; i++){
-            soldier -= enemy[i];
-            pq.offer(enemy[i]);
+        int curN = n;
+        int curK = k;
+        for (int enemyCnt : enemy){
+            curN -= enemyCnt;
+            pq.offer(enemyCnt);
             
-            if (soldier < 0){
-                // 무적권이 남아있을 때
-                if (pass > 0){
-                    pass -= 1;
-                    soldier += pq.poll();
-                } else { // 무적권이 없을 경우
-                    answer = i;
+            if (curN < 0){
+                if (curK > 0){
+                    curN += pq.poll();
+                    curK --;
+                } else {
                     break;
                 }
             }
+            
+            answer++;
         }
+        
         return answer;
     }
 }
