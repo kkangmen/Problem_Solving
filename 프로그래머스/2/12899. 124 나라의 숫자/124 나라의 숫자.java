@@ -2,26 +2,29 @@ import java.util.*;
 
 class Solution {
     public String solution(int n) {
-        String answer = "";
-        
-        int[] arr = {4, 1, 2};
-        StringBuilder sb = new StringBuilder();
+        StringBuilder answer = new StringBuilder();
         
         while (n > 0){
-            int remainder = n % 3;
-            n = n/3;
+            int remainder = n%3;
             
-            if (remainder == 0){
-                n -= 1;
+            if (n%3 == 0){
+                n = n/3 -1;
+            } else {
+                n = n/3;
             }
             
-            answer = String.valueOf(remainder) + answer;
+            answer.append(String.valueOf(remainder));
         }
         
-        for (int i = 0; i < answer.length(); i++){
-            sb.append(arr[answer.charAt(i)-'0']);
+        String word = answer.reverse().toString();
+        answer.setLength(0);
+        for (char ch : word.toCharArray()){
+            if (ch == '0'){
+                answer.append("4");
+            } else {
+                answer.append(String.valueOf(ch));
+            }
         }
-        
-        return sb.toString();
+        return answer.toString();
     }
 }
