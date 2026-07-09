@@ -2,10 +2,12 @@ import java.util.*;
 
 class Solution {
     
-    HashMap<Integer, Integer> map = new LinkedHashMap<>();
+    Map<Integer, Long> map = new LinkedHashMap<>();
     
-    public boolean isPossible(int i, int j){
-        if ((i*3 == j*2) || (i*2 == j) || (i*4 == j*3)){
+    public boolean checkPossible(int weight1, int weight2){
+        if ((weight1*2 == weight2) 
+            || (weight1*3 == weight2*2)
+            || (weight1*4 == weight2*3)){
             return true;
         }
         return false;
@@ -15,27 +17,27 @@ class Solution {
         long answer = 0;
         
         Arrays.sort(weights);
-        
-        for (int i : weights){
-            map.put(i, map.getOrDefault(i, 0) + 1);
+        for (int weight : weights){
+            map.put(weight, map.getOrDefault(weight, 0L) + 1L);
         }
         
-        List<Integer> list = new ArrayList<>(map.keySet());
-        
-        for (int i : map.keySet()){
-            int num = map.get(i);
-            if (num > 1){
-                answer += (long)num*(num-1)/2;
+        List<Integer> weightList = new ArrayList<>(map.keySet());
+        for (int i = 0; i < weightList.size()-1; i++){
+            for (int j = i+1; j < weightList.size(); j++){
+                int weight1 = weightList.get(i);
+                int weight2 = weightList.get(j);
+                if (checkPossible(weight1, weight2)){
+                    // System.out.println(weight1 + " " + weight2);
+                    answer += map.get(weight1) * map.get(weight2);
+                }   
             }
         }
-        
-        for (int i = 0; i < list.size()-1; i++){
-            for (int j = i+1; j < list.size(); j++){
-                int weight1 = list.get(i);
-                int weight2 = list.get(j);
-                if (isPossible(weight1, weight2)){
-                    answer += (long)map.get(weight1)*(long)map.get(weight2);
-                }
+        // System.out.println(answer);
+        // 같은 숫자 쌍
+        for (int weight : map.keySet()){
+            long num = map.get(weight);
+            if (num >= 2){
+                answer += num*(num-1)/2;
             }
         }
         return answer;
