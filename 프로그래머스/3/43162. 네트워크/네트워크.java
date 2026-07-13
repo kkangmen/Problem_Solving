@@ -2,21 +2,23 @@ import java.util.*;
 
 class Solution {
     
-    static Map<Integer, List<Integer>> graph = new HashMap<>();
-    static boolean[] isVisited;
-    static Queue<Integer> q = new LinkedList<>();
+    Map<Integer, List<Integer>> graph = new HashMap<>();
+    boolean[] isVisited;
+    Queue<Integer> q = new LinkedList<>();
     
     public void bfs(int start){
         isVisited[start] = true;
         q.offer(start);
         
         while (!q.isEmpty()){
-            int curNode = q.poll();
-            for (int i = 0; i < graph.get(curNode).size(); i++){
-                int nxtNode = graph.get(curNode).get(i);
-                if (!isVisited[nxtNode]){
-                    isVisited[nxtNode] = true;
-                    q.offer(nxtNode);
+            int node = q.poll();
+            
+            for (int i = 0; i < graph.get(node).size(); i++){
+                int nNode = graph.get(node).get(i);
+                
+                if (!isVisited[nNode]){
+                    q.offer(nNode);
+                    isVisited[nNode] = true;
                 }
             }
         }
@@ -25,36 +27,28 @@ class Solution {
     public int solution(int n, int[][] computers) {
         int answer = 0;
         
-        // graph 초기화
+        // 초기화
         for (int i = 0; i < n; i++){
-            graph.put(i, new ArrayList<>());
+            graph.put(i, new LinkedList<>());
         }
-        isVisited = new boolean[n];
-        
-        // graph에 연결 정보 대입
-        for (int i = 0; i < n; i++){
+        for (int i = 0; i < computers.length; i++){
             for (int j = 0; j < n; j++){
-                if (i == j){
-                    continue;
-                }
-                if (computers[i][j] == 1){
+                if (i != j && computers[i][j] == 1){
                     graph.get(i).add(j);
                 }
             }
         }
+        isVisited = new boolean[n];
         
-        // bfs 탐색
         for (int i = 0; i < n; i++){
             if (!isVisited[i]){
                 answer++;
                 bfs(i);
             }
         }
-    
-        // // 출력
-        // for (int i = 0; i < n; i++){
+        // for (int i : graph.keySet()){
         //     for (int j = 0; j < graph.get(i).size(); j++){
-        //         System.out.print(graph.get(i).get(j) + " ");
+        //         System.out.print(graph.get(i).get(j));
         //     }
         //     System.out.println();
         // }
