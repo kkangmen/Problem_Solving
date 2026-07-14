@@ -1,13 +1,16 @@
 import java.util.*;
 
 class Solution {
-    public boolean isPrime(Long number){
-        if (number == 1){
+    
+    public boolean isPrimeNum(Long num){
+        if (num == 1L){
             return false;
         }
         
-        for (int i = 2; i <= Math.floor(Math.sqrt(number)); i++){
-            if (number % i == 0){
+        Long sqrtNum = (long) Math.sqrt(num);
+        
+        for (int i = 2; i <= sqrtNum; i++){
+            if (num % i == 0){
                 return false;
             }
         }
@@ -17,17 +20,17 @@ class Solution {
     public int solution(int n, int k) {
         int answer = 0;
         
-        String s = Integer.toString(n, k);
+        String knary = Integer.toString(n, k);
         
-        String[] numbers = s.split("0");
+        String[] nums = knary.split("0");
         
-        for (int i = 0; i < numbers.length; i++){
-            if (numbers[i].equals("")){
+        for (String s : nums){
+            if (s.equals("")){
                 continue;
             }
-            if (isPrime(Long.parseLong(numbers[i]))){
-                System.out.println(numbers[i]);
-                answer += 1;
+            
+            if (isPrimeNum(Long.parseLong(s))){
+               answer++; 
             }
         }
         return answer;
