@@ -1,55 +1,53 @@
 import java.util.*;
 
 class Solution {
-    class File {
+    
+    class Info {
         String head;
-        int number;
-        String origin;
-        File (String head, int number, String origin){
-            this.head = head;
-            this.number = number;
-            this.origin = origin;
+        String number;
+        String fileName;
+        Info (String h, String n, String f){
+            this.head = h;
+            this.number = n;
+            this.fileName = f;
         }
     }
     
-    List<File> orderFileList = new ArrayList<>();
+    List<Info> list = new LinkedList<>();
     
     public List<String> solution(String[] files) {
-        List<String> answer = new ArrayList<>();
+        List<String> answer = new LinkedList<>();
         
-        for (String s : files){
+        for (String file : files){
             StringBuilder head = new StringBuilder();
             StringBuilder number = new StringBuilder();
-            boolean change = false;
-            
-            for (char ch : s.toCharArray()){
-                if ((ch < '0' || ch > '9') && !change){
-                    head.append(String.valueOf(ch));
-                    continue;
-                }
-                
-                if ((ch >= '0' && ch <= '9')){
-                    change = true;
-                    number.append(String.valueOf(ch));
-                } else {
-                    break;
-                }
+            int index = 0;
+            while (file.charAt(index) < '0' || file.charAt(index) > '9'){
+                head.append(String.valueOf(file.charAt(index)));
+                index++;
             }
-            orderFileList.add(new File(head.toString().toLowerCase(), Integer.parseInt(number.toString()), s));
-            // System.out.println(head.toString().toLowerCase());
-            // System.out.println(Integer.parseInt(number.toString()));
-            // System.out.println(s);
+            
+            int maxCnt = 0;
+            while (index < file.length() && (file.charAt(index) >= '0' && file.charAt(index) <= '9') && maxCnt <= 5){
+                number.append(String.valueOf(file.charAt(index)));
+                index++;
+                maxCnt++;
+            }
+            
+            list.add(new Info(head.toString(), number.toString(), file));
         }
         
-        Collections.sort(orderFileList, (o1, o2) -> {
-            if (o1.head.equals(o2.head)){
-                return o1.number - o2.number;
+        Collections.sort(list, (Info o1, Info o2) -> {
+            String s1 = o1.head.toLowerCase(); 
+            String s2 = o2.head.toLowerCase(); 
+            if (s1.equals(s2)){
+                return Integer.parseInt(o1.number) - Integer.parseInt(o2.number);
             }
-            return o1.head.compareTo(o2.head);
+           return s1.compareTo(s2);
         });
         
-        for (File f : orderFileList){
-            answer.add(f.origin);
+        for (Info i : list){
+            answer.add(i.fileName);
         }
         return answer;
     }
