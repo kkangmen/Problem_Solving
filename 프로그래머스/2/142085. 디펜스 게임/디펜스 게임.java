@@ -1,21 +1,21 @@
 import java.util.*;
+
 class Solution {
-    
     Queue<Integer> pq = new PriorityQueue<>(Collections.reverseOrder());
     
     public int solution(int n, int k, int[] enemy) {
         int answer = 0;
         
-        int curN = n;
-        int curK = k;
-        for (int enemyCnt : enemy){
-            curN -= enemyCnt;
-            pq.offer(enemyCnt);
+        int soilders = n;
+        int pass = k;
+        for (int i = 0; i < enemy.length; i++){
+            soilders -= enemy[i];
+            pq.offer(enemy[i]);
             
-            if (curN < 0){
-                if (curK > 0){
-                    curN += pq.poll();
-                    curK --;
+            if (soilders < 0){
+                if (pass > 0){
+                    pass--;
+                    soilders += pq.poll();
                 } else {
                     break;
                 }
@@ -23,7 +23,6 @@ class Solution {
             
             answer++;
         }
-        
         return answer;
     }
 }
