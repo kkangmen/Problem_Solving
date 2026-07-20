@@ -1,21 +1,19 @@
 import java.util.*;
 
 class Solution {
-    public long[] solution(long[] numbers) {
-        long[] answer = new long[numbers.length];
+    public List<Long> solution(long[] numbers) {
+        List<Long> answer = new LinkedList<>();
         
-        for (int i = 0; i < numbers.length; i++){
-            // 짝수면 +1
-            if (numbers[i] % 2 == 0){
-                answer[i] = numbers[i] + 1;
+        for (long l : numbers){
+            if (l % 2 == 0){
+                answer.add(l+1);
             } else {
-                String binaryNum = Long.toString(numbers[i], 2);
-                binaryNum = "0" + binaryNum;
+                String binaryNum = "0" + Long.toString(l, 2);
                 
-                for (int j= binaryNum.length()-1; j>= 0; j--){
-                    if (binaryNum.charAt(j) == '0'){
-                        binaryNum = binaryNum.substring(0, j) + "10" + binaryNum.substring(j+2, binaryNum.length());
-                        answer[i] = Long.parseLong(binaryNum, 2);
+                for (int i = binaryNum.length()-1; i > 0; i--){
+                    if (binaryNum.charAt(i) == '1' && binaryNum.charAt(i-1) == '0'){
+                        binaryNum = binaryNum.substring(0, i-1) + "10" + binaryNum.substring(i+1);
+                        answer.add(Long.parseLong(binaryNum, 2));
                         break;
                     }
                 }
