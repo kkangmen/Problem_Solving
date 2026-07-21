@@ -4,21 +4,23 @@ class Solution {
     public String solution(String number, int k) {
         StringBuilder answer = new StringBuilder();
         
-        int maxIndex = 0;
-        for (int i = 0; i < number.length()-k; i++){
+        Stack<Character> s = new Stack<>();
+        int keep = number.length() - k;
+        for (int i = 0; i < number.length(); i++){
+            char ch = number.charAt(i);
             
-            char maxChar = '0'-1;
-            for (int j = maxIndex; j < k+1+i; j++){
-                char curChar = number.charAt(j);
-                
-                if (maxChar < curChar){
-                    maxChar = curChar;
-                    maxIndex = j;
-                }
+            while (!s.isEmpty() && k > 0 && s.peek() < ch){
+                s.pop();
+                k--;
             }
-            maxIndex += 1;
-            answer.append(String.valueOf(maxChar));
+            s.push(ch);
         }
-        return answer.toString();
+        
+        while (!s.isEmpty()){
+            answer.append(String.valueOf(s.pop()));
+        }
+        
+        
+        return answer.reverse().substring(0, keep);
     }
 }
