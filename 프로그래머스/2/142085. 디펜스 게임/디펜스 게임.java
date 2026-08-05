@@ -1,26 +1,27 @@
 import java.util.*;
 
 class Solution {
+    
     Queue<Integer> pq = new PriorityQueue<>(Collections.reverseOrder());
     
     public int solution(int n, int k, int[] enemy) {
         int answer = 0;
         
         int soilders = n;
-        int pass = k;
-        for (int i = 0; i < enemy.length; i++){
-            soilders -= enemy[i];
-            pq.offer(enemy[i]);
+        int shield = k;
+        
+        for (int i : enemy){
+            soilders -= i;
+            pq.offer(i);
             
             if (soilders < 0){
-                if (pass > 0){
-                    pass--;
+                if (shield > 0){
+                    shield--;
                     soilders += pq.poll();
-                } else {
+                } else { // 무적권이 없다면
                     break;
                 }
             }
-            
             answer++;
         }
         return answer;
