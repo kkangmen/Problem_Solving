@@ -5,15 +5,16 @@ class Solution {
     Stack<Integer> s = new Stack();
     
     public int solution(int[] order) {
-        int index = 0;
+        int answer = 0;
+        
         for (int i = 1; i <= order.length; i++){
             s.push(i);
             
-            while (!s.isEmpty() && s.peek() == order[index]){
+            while (!s.isEmpty() && order[answer] == s.peek()){
                 s.pop();
-                index++;
+                answer++;
             }
         }
-        return index;
+        return answer;
     }
 }
