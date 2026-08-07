@@ -3,33 +3,32 @@ import java.util.*;
 class Solution {
     
     Queue<Integer> waiting = new LinkedList<>();
-    Queue<Integer> bridge_queue = new LinkedList<>();
+    Queue<Integer> bridge = new LinkedList<>();
     
     public int solution(int bridge_length, int weight, int[] truck_weights) {
-        int time = 0;
+        int answer = 0;
         
-        // 초기화
         for (int i : truck_weights){
             waiting.offer(i);
         }
-        int totalWeight = 0;
         
+        int totalWeight = 0;
         while (!waiting.isEmpty()){
             
-            if (bridge_queue.size() == bridge_length){
-                totalWeight -= bridge_queue.poll();
+            if (bridge.size() == bridge_length){
+                totalWeight -= bridge.poll();
             }
             
-            if (totalWeight + waiting.peek() <= weight){
-                int cur = waiting.poll();
-                bridge_queue.offer(cur);
-                totalWeight += cur;
+            int truckWeight = waiting.peek();
+            if (totalWeight + truckWeight <= weight){
+                bridge.offer(truckWeight);
+                totalWeight += truckWeight;
+                waiting.poll();
             } else {
-                bridge_queue.offer(0);
+                bridge.offer(0);
             }
-            time++;
-        }
-        
-        return time + bridge_length;
+            answer++;
+        }    
+        return answer+bridge_length;
     }
 }
