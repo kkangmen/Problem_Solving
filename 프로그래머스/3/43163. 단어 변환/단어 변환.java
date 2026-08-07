@@ -2,46 +2,52 @@ import java.util.*;
 
 class Solution {
     
-    int answer = Integer.MAX_VALUE;
-    boolean[] isVisited;
+    Queue<Integer> q = new LinkedList<>();
+    int[] distance;
     
-    public boolean canBeNext(String curWord, String nxtWord){
+    public boolean checkOneDiff(String pivot, String word){
         int diffCount = 0;
-        for (int i = 0; i < curWord.length(); i++){
-            if (curWord.charAt(i) != nxtWord.charAt(i)){
+        for (int i = 0; i < pivot.length(); i++){
+            if (pivot.charAt(i) != word.charAt(i)){
                 diffCount++;
             }
         }
-        
         if (diffCount == 1){
             return true;
         }
         return false;
     }
-    
-    public void dfs(int count, String curWord, String target, String[] words){
-        if (curWord.equals(target)){
-            answer = Math.min(count, answer);
-        }
         
-        for (int i = 0; i < words.length; i++){
-            if (canBeNext(curWord, words[i]) && !isVisited[i]){
-                isVisited[i] = true;
-                dfs(count+1, words[i], target, words);
-                isVisited[i] = false;
+    public void bfs(String[] words){
+        while (!q.isEmpty()){
+            int wordIdx = q.poll();
+            
+            for (int i = 0; i < words.length; i++){
+                if (distance[i] == 0 && checkOneDiff(words[wordIdx], words[i])){
+                    q.offer(i);
+                    distance[i] = distance[wordIdx] + 1;
+                }
             }
         }
-        
     }
     
     public int solution(String begin, String target, String[] words) {
-        isVisited = new boolean[words.length];
+        int answer = 0;
         
-        dfs(0, begin, target, words);
-        
-        if (answer == Integer.MAX_VALUE){
-            return 0;
+        distance = new int[words.length];
+        for (int i = 0; i < words.length; i++){
+            if (checkOneDiff(begin, words[i])){
+                q.offer(i);
+                distance[i] = 1;
+            }
         }
-        return answer;
+        bfs(words);
+        
+        for (int i = 0; i < words.length; i++){
+            if (words[i].equals(target)){
+                return distance[i];
+            }
+        }
+        return 0;
     }
 }
