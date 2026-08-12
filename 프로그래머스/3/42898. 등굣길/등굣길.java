@@ -2,65 +2,52 @@ import java.util.*;
 
 class Solution {
     
-    static long[][] dp;
-    static boolean[][] isWater;
-    
-    public long solution(int m, int n, int[][] puddles) {
-        long answer = 0;
-        dp = new long[n][m];
-        isWater = new boolean[n][m];
+    int[][] map;
+    static final int DEVIDE_NUM = 1000000007;
+        
+    public int solution(int m, int n, int[][] puddles) {
+        int answer = 0;
+        
+        map = new int[n][m];
         
         // 초기화
-        dp[0][0] = 1;
-        for (int i = 1; i < n; i++){
-            dp[i][0] = 1;
-        }
-        for (int i = 1; i < m; i++){
-            dp[0][i] = 1;
+        for (int i = 0; i < n; i++){
+            for (int j = 0; j < m; j++){
+                map[i][j] = -1;
+            }
         }
         
-        // 웅덩이를 지도에 표시
-        for (int i = 0; i < puddles.length; i++){
-            int col = puddles[i][0];
-            int row = puddles[i][1];
-            
-            isWater[row-1][col-1] = true;
+        // 물 웅덩이
+        for (int[] puddle : puddles){
+            map[puddle[1]-1][puddle[0]-1] = 0;
         }
-    
+
+        map[0][0] = 1;
         
         for (int i = 0; i < n; i++){
             for (int j = 0; j < m; j++){
-                if (i == 0 && j == 0){
-                    continue;
-                }
-                
-                // 물 웅덩이라면,
-                if (isWater[i][j]){
-                    dp[i][j] = 0;
-                } else { // 물 웅덩이가 아니라면,
-                    // i가 0일 경우
+                if (map[i][j] == -1){
+                    // 1행일 경우
                     if (i == 0){
-                        dp[i][j] = dp[i][j-1];
+                        map[i][j] = map[i][j-1];
+                        continue;
+                    } // 1열일 경우
+                    if (j == 0){
+                        map[i][j] = map[i-1][j];
+                        continue;
                     }
-                    else if (j == 0){
-                        dp[i][j] = dp[i-1][j];
-                    }
-                    else {
-                        dp[i][j] = (dp[i-1][j] + dp[i][j-1]) % 1000000007;
-                    }
+                    map[i][j] = (map[i-1][j] + map[i][j-1] ) % DEVIDE_NUM;
+                    
                 }
             }
         }
         
-        answer = dp[n-1][m-1];
-        
-//         // 출력
 //         for (int i = 0; i < n; i++){
 //             for (int j = 0; j < m; j++){
-//                 System.out.print(dp[i][j] + " ");
+//                 System.out.print(map[i][j] + " ");
 //             }
 //             System.out.println();
 //         }
-        return answer;
+        return map[n-1][m-1];
     }
 }
