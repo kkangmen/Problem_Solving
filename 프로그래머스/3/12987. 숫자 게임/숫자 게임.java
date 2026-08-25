@@ -7,15 +7,18 @@ class Solution {
         Arrays.sort(A);
         Arrays.sort(B);
         
-        int pointerA = 0; int pointerB = 0;
-        while (pointerB < B.length){
+        int index = 0;
+        for (int i = 0; i < A.length;){
+            if (index == B.length){
+                break;
+            }
             
-            if (A[pointerA] < B[pointerB]){
+            if (A[i] < B[index]){
                 answer++;
-                pointerA += 1;
-                pointerB += 1;
+                i++;
+                index++;
             } else {
-                pointerB += 1;
+                index++;
             }
         }
         return answer;
