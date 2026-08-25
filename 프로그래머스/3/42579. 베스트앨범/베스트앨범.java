@@ -1,53 +1,56 @@
 import java.util.*;
 
-class idxCount {
-    int idx;
-    int count;
-    public idxCount(int idx, int count){
-        this.idx = idx;
-        this.count = count;
-    }
-}
-
 class Solution {
+    
+    public class Info {
+        String genre;
+        int play;
+        Info(String genre, int play){
+            this.genre = genre;
+            this.play = play;
+        }
+    }
+    
+    List<Info> list = new LinkedList<>();
+    
     public List<Integer> solution(String[] genres, int[] plays) {
         List<Integer> answer = new LinkedList<>();
-        Map<String, PriorityQueue<idxCount>> genreMap = new HashMap<>();
-        Map<String, Integer> totalPlayMap = new HashMap<>();
         
+        Map<String, Integer> map = new HashMap<>();
         for (int i = 0; i < genres.length; i++){
-            String genre = genres[i];
-            int play = plays[i];
-            
-            totalPlayMap.put(genre, totalPlayMap.getOrDefault(genre, 0) + play);
-            
-            genreMap.putIfAbsent(genre, new PriorityQueue<>((o1, o2) -> {
-                if (o1.count == o2.count){
-                    return Integer.compare(o1.idx, o2.idx);
-                }
-                return Integer.compare(o2.count, o1.count);
-            }));
-            
-            genreMap.get(genre).add(new idxCount(i, play));
+            map.put(genres[i], map.getOrDefault(genres[i], 0) + plays[i]);
         }
         
-        List<String> list = new LinkedList<>(totalPlayMap.keySet());
+        for (String s : map.keySet()){
+            list.add(new Info(s, map.get(s)));
+        }
         
-        Collections.sort(list, (String o1, String o2) -> {
-           return Integer.compare(totalPlayMap.get(o2), totalPlayMap.get(o1)); 
+        Collections.sort(list, (o1, o2) -> {
+            return o2.play - o1.play;
         });
         
-        for (String s : list){
-            int count = 0;
-            while (count < 2 && !genreMap.get(s).isEmpty()){
-                answer.add(genreMap.get(s).poll().idx);
-                count++;
-            }
-        }
-        
-        // print
         for (int i = 0; i < list.size(); i++){
-            System.out.print(list.get(i) + " ");
+            String s = list.get(i).genre;
+            List<int[]> compare = new LinkedList<>();
+            
+            for (int j = 0; j < genres.length; j++){
+                if (s.equals(genres[j])){
+                    compare.add(new int[]{plays[j], j});
+                }
+            }
+            
+            Collections.sort(compare, (o1, o2) -> {
+                if (o2[0] == o1[0]){
+                    return o1[1] - o2[1];
+                }
+                return o2[0]- o1[0];
+            });
+            
+            int index = 0;
+            while (index < 2 && index != compare.size()){
+                answer.add(compare.get(index)[1]);
+                index++;
+            }
         }
         return answer;
     }
