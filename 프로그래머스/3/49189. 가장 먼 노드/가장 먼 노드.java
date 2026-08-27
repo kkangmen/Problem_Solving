@@ -1,26 +1,24 @@
 import java.util.*;
 
 class Solution {
-    static List<List<Integer>> graph = new LinkedList<>();
-    static boolean[] isVisited;
-    static int[] distance;
-    static Queue<Integer> q = new LinkedList<>();
-    static int maxDistance = 0;
+    
+    int[] distance;
+    Map<Integer, List<Integer>> graph = new HashMap<>();
+    Queue<Integer> q = new LinkedList<>();
     
     public void bfs(int start){
-        isVisited[start] = true;
         q.offer(start);
+        distance[start] = 0;
         
         while (!q.isEmpty()){
             int node = q.poll();
             
             for (int i = 0; i < graph.get(node).size(); i++){
-                int n_node = graph.get(node).get(i);
-                if (!isVisited[n_node]){
-                    q.offer(n_node);
-                    isVisited[n_node] = true;
-                    distance[n_node] = distance[node] + 1;
-                    maxDistance = distance[n_node];
+                int nNode = graph.get(node).get(i);
+                
+                if (distance[nNode] == -1){
+                    q.offer(nNode);
+                    distance[nNode] = distance[node]+1;
                 }
             }
         }
@@ -29,26 +27,31 @@ class Solution {
     public int solution(int n, int[][] edge) {
         int answer = 0;
         
-        isVisited = new boolean[n+1];
-        distance = new int[n+1];
+        // 초기화
+        distance = new int[n];
+        for (int i = 0; i < n; i++){
+            graph.put(i, new LinkedList<>());
+        }
+        Arrays.fill(distance, -1);
         
-        for (int i = 0; i <= n; i++){
-            graph.add(new LinkedList<>());
+        for (int[] row : edge){
+            graph.get(row[0]-1).add(row[1]-1);
+            graph.get(row[1]-1).add(row[0]-1);
         }
         
-        for (int[] e : edge){
-            graph.get(e[0]).add(e[1]);
-            graph.get(e[1]).add(e[0]);
+        // bfs
+        bfs(0);
+        
+        int maxDistance = 0;
+        for (int i : distance){
+            maxDistance = Math.max(maxDistance, i);
         }
         
-        bfs(1);
-        
-        for (int i = 1; i <= n; i++){
-            if (distance[i] == maxDistance){
+        for (int i : distance){
+            if (maxDistance == i){
                 answer++;
             }
         }
-        
         return answer;
     }
 }
