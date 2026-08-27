@@ -4,23 +4,19 @@ class Solution {
     public String solution(String number, int k) {
         StringBuilder answer = new StringBuilder();
         
-        Stack<Character> s = new Stack<>();
-        int keep = number.length() - k;
-        for (int i = 0; i < number.length(); i++){
-            char ch = number.charAt(i);
+        int numLength = number.length() - k;
+        int startIdx = 0;
+        for (int i = 0; i < numLength; i++){
+            char ch = '0' - 1;
             
-            while (!s.isEmpty() && k > 0 && s.peek() < ch){
-                s.pop();
-                k--;
+            for (int j = startIdx; j < i+k+1; j++){
+                if (ch < number.charAt(j)){
+                    ch = number.charAt(j);
+                    startIdx = j+1;
+                }                
             }
-            s.push(ch);
+            answer.append(String.valueOf(ch));
         }
-        
-        while (!s.isEmpty()){
-            answer.append(String.valueOf(s.pop()));
-        }
-        
-        
-        return answer.reverse().substring(0, keep);
+        return answer.toString();
     }
 }
