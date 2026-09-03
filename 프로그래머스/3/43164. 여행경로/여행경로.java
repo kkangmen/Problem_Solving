@@ -1,40 +1,52 @@
 import java.util.*;
 
 class Solution {
-    List<String> answer = new ArrayList<>();
-    boolean[] visited;
-    boolean found = false;
     
-    public void dfs(String cur, int count, String[][] tickets, List<String> path) {
-        path.add(cur);
+    boolean[] isVisited;
+    boolean flag = false;
+    
+    public void dfs(int index, String dest, String[][] tickets, List<String> answer){
+        // System.out.println(tickets[index][0] + " " + dest);
         
-        if (count == tickets.length) {
-            answer = new ArrayList<>(path);  // 복사본 저장
-            found = true;
+        isVisited[index] = true;
+        answer.add(tickets[index][0]);
+        
+        // 종료 조건
+        if (answer.size() == tickets.length){
+            // System.out.println("종료조건");
+            
+            flag = true;
+            answer.add(tickets[index][1]);
+            // for (String s : answer){
+            //     System.out.print(s + " ");
+            // }
+            // System.out.println();
             return;
         }
         
-        for (int i = 0; i < tickets.length; i++) {
-            if (!visited[i] && tickets[i][0].equals(cur)) {
-                visited[i] = true;
-                dfs(tickets[i][1], count + 1, tickets, path);
-                if (found) return;      // 첫 정답을 찾으면 즉시 종료
-                visited[i] = false;     // 백트래킹
+        for (int i = 0; i < tickets.length; i++){
+            if (!isVisited[i] && tickets[i][0].equals(dest)){
+                dfs(i, tickets[i][1], tickets, answer);
+                if (flag) return;
             }
         }
         
-        path.remove(path.size() - 1);   // 실패했으니 되돌리기
+        isVisited[index] = false;
+        answer.remove(answer.size()-1);
     }
     
     public String[] solution(String[][] tickets) {
-        // 알파벳 순 정렬: 사전순으로 앞선 경로를 먼저 탐색
-        Arrays.sort(tickets, (a, b) -> {
-            if (!a[0].equals(b[0])) return a[0].compareTo(b[0]);
-            return a[1].compareTo(b[1]);
-        });
+        List<String> answer = new LinkedList<>();
         
-        visited = new boolean[tickets.length];
-        dfs("ICN", 0, tickets, new ArrayList<>());
+        Arrays.sort(tickets, (s1, s2) -> s1[1].compareTo(s2[1]));
+        isVisited = new boolean[tickets.length];
+        
+        for (int i = 0; i < tickets.length; i++){
+            if (tickets[i][0].equals("ICN")){
+                dfs(i, tickets[i][1], tickets, answer);
+                if (flag) break;
+            }
+        }
         
         return answer.toArray(new String[0]);
     }
