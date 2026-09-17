@@ -6,30 +6,29 @@ class Solution {
     int[][] distance;
     int[] dx = {0, 1, 0, -1};
     int[] dy = {1, 0, -1, 0};
+    Queue<int[]> q = new LinkedList<>();
     int[] start;
     int[] end;
-    int row = 0; int col = 0;
-    Queue<int[]> q = new LinkedList<>();
     
-    public void bfs(){
-        q.offer(start);
-        distance[start[0]][start[1]] = 1;
+    public void bfs(int x, int y){
+        distance[x][y] = 0;
+        q.offer(new int[]{x, y});
         
-        while (!q.isEmpty()){
-            int[] curPoint = q.poll();
+        while(!q.isEmpty()){
+            int[] curNode = q.poll();
             
             for (int i = 0; i < 4; i++){
-                int nx = curPoint[0];
-                int ny = curPoint[1];
-                // 다음 이동할 칸이 벽에 닿거나, D가 나올때까지 이동
-                while ((0 <= nx+dx[i] && nx+dx[i] < row && 0 <= ny+dy[i] && ny+dy[i] < col) 
-                    && (!map[nx+dx[i]][ny+dy[i]].equals("D"))){
+                int nx = curNode[0];
+                int ny = curNode[1];
+                // 벽에 닿거나, 맵 끝까지 이동
+                while (0 <= nx+dx[i] && nx+dx[i] < map.length && 0 <= ny+dy[i] && ny+dy[i] < map[0].length 
+                       && !map[nx+dx[i]][ny+dy[i]].equals("D")){
                     nx += dx[i];
                     ny += dy[i];
                 }
-                
-                if (distance[nx][ny] == 0){
-                    distance[nx][ny] = distance[curPoint[0]][curPoint[1]] + 1;
+                // 해당 지점에 방문한 적이 없다면 거리 갱신 및 추가
+                if (distance[nx][ny] == -1){
+                    distance[nx][ny] = distance[curNode[0]][curNode[1]] + 1;
                     q.offer(new int[]{nx, ny});
                 }
             }
@@ -39,16 +38,14 @@ class Solution {
     public int solution(String[] board) {
         int answer = 0;
         
-        // 초기화
-        row = board.length;
-        col = board[0].length();
+        int row = board.length;
+        int col = board[0].length();
+        // init
         map = new String[row][col];
         distance = new int[row][col];
-        
-        for (int i = 0; i < board.length; i++){
-            String s = board[i];
-            for (int j = 0; j < s.length(); j++){
-                map[i][j] = String.valueOf(s.charAt(j));
+        for (int i = 0; i < row; i++){
+            for (int j = 0; j < col; j++){
+                map[i][j] = String.valueOf(board[i].charAt(j));
                 if (map[i][j].equals("R")){
                     start = new int[]{i, j};
                 }
@@ -56,13 +53,20 @@ class Solution {
                     end = new int[]{i, j};
                 }
             }
+        }    
+        for (int i = 0; i < row; i++){
+            Arrays.fill(distance[i], -1);
         }
+        // bfs
+        bfs(start[0], start[1]);
         
-        bfs();
-        
-        if (distance[end[0]][end[1]] == 0){
-            return -1;
-        }
-        return distance[end[0]][end[1]]-1;
+        // 출력
+        // for (int i = 0; i < row; i++){
+        //     for (int j = 0; j < col; j++){
+        //         System.out.print(distance[i][j] + " ");
+        //     }
+        //     System.out.println();
+        // }
+        return distance[end[0]][end[1]];
     }
 }
