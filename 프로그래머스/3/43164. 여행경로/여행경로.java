@@ -1,49 +1,45 @@
 import java.util.*;
 
 class Solution {
-    Map<String, List<String>> graph = new HashMap<>();
-    Map<String, boolean[]> used = new HashMap<>();
-    List<String> answer = new ArrayList<>();
+    Map<String, List<String>> map = new HashMap<>();
+    Map<String, boolean[]> isVisited = new HashMap<>();
     boolean flag = false;
-    int total;
+    List<String> answer = new ArrayList<>();
     
-    public void bTracking(String cur, List<String> path) {
-        path.add(cur);
+    public void dfs(String point, String[][] tickets, List<String> cur){
+        cur.add(point);                        // 수정 1
         
-        // 티켓을 모두 썼다면 = 방문한 공항이 티켓 수 + 1
-        if (path.size() == total + 1) {
-            answer = new ArrayList<>(path);   // 복사본 저장
+        if (cur.size() == tickets.length + 1){
+            answer = new ArrayList<>(cur);
             flag = true;
             return;
         }
         
-        List<String> nexts = graph.getOrDefault(cur, Collections.emptyList());
-        boolean[] check = used.get(cur);
+        List<String> nexts = map.getOrDefault(point, Collections.emptyList());  // 수정 3
+        boolean[] visited = isVisited.getOrDefault(point, new boolean[0]);
         
-        for (int i = 0; i < nexts.size(); i++) {
-            if (!check[i]) {
-                check[i] = true;
-                bTracking(nexts.get(i), path);
+        for (int i = 0; i < nexts.size(); i++){
+            if (!visited[i]){
+                visited[i] = true;
+                dfs(nexts.get(i), tickets, cur);
                 if (flag) return;
-                check[i] = false;          // 백트래킹
+                visited[i] = false;
             }
         }
         
-        path.remove(path.size() - 1);      // 실패 → 자기가 추가한 것 되돌리기
+        cur.remove(cur.size() - 1);            // 수정 2
     }
     
     public String[] solution(String[][] tickets) {
-        total = tickets.length;
-        
-        for (String[] t : tickets) {
-            graph.computeIfAbsent(t[0], k -> new ArrayList<>()).add(t[1]);
+        for (String[] ticket : tickets){
+            map.computeIfAbsent(ticket[0], k -> new ArrayList<>()).add(ticket[1]);
         }
-        for (String key : graph.keySet()) {
-            Collections.sort(graph.get(key));              // 사전순
-            used.put(key, new boolean[graph.get(key).size()]);
+        for (String s : map.keySet()){
+            Collections.sort(map.get(s));                          // 정렬 먼저
+            isVisited.put(s, new boolean[map.get(s).size()]);
         }
         
-        bTracking("ICN", new ArrayList<>());
-        return answer.toArray(new String[0]);
+        dfs("ICN", tickets, new ArrayList<>());
+        return answer.toArray(new String[0]);  // 수정 5
     }
 }
