@@ -2,7 +2,7 @@ import java.util.*;
 
 class Solution {
     
-    int[][] board;
+    int[][] map;
     
     public int rotate(int[] query){
         int x1 = query[0];
@@ -10,54 +10,61 @@ class Solution {
         int x2 = query[2];
         int y2 = query[3];
         
-        int temp = board[x1][y1];
+        int temp = map[x1][y1];
         int min = temp;
         
-        // 아래 -> 위 (좌)
-        for (int r = x1; r < x2; r++){
-            board[r][y1] = board[r+1][y1];
-            min = Math.min(min, board[r][y1]);
+        // 좌측
+        for (int i = x1; i < x2; i++){
+            map[i][y1] = map[i+1][y1];
+            min = Math.min(min, map[i][y1]);
         }
         
-        // 오 -> 왼 (아래)
-        for (int c = y1; c < y2; c++){
-            board[x2][c] = board[x2][c+1];
-            min = Math.min(min, board[x2][c]);
+        // 하단
+        for (int i = y1; i < y2; i++){
+            map[x2][i] = map[x2][i+1];
+            min = Math.min(min, map[x2][i]);
         }
         
-        // 위 -> 아래 (우)
-        for (int r = x2; r > x1; r--){
-            board[r][y2] = board[r-1][y2];
-            min = Math.min(min, board[r][y2]);
+        // 우측
+        for (int i = x2; i > x1; i--){
+            map[i][y2] = map[i-1][y2];
+            min = Math.min(min, map[i][y2]);
         }
         
-        // 왼 -> 오 (위)
-        for (int c = y2; c > y1; c--){
-            board[x1][c] = board[x1][c-1];
-            min = Math.min(min, board[x1][c]);
+        // 상단
+        for (int i = y2; i > y1; i--){
+            map[x1][i] = map[x1][i-1];
+            min = Math.min(min, map[x1][i]);
         }
         
-        board[x1][y1+1] = temp;
-        
+        map[x1][y1+1] = temp;
         return min;
     }
     
     public int[] solution(int rows, int columns, int[][] queries) {
-        board = new int[rows+1][columns+1];
-        int num = 1;
+        List<Integer> answer = new ArrayList<>();
         
-        // 행렬 초기화
+        // init
+        map = new int[rows+1][columns+1];
+        int num = 1;
         for (int i = 1; i <= rows; i++){
             for (int j = 1; j <= columns; j++){
-                board[i][j] = num++;
+                map[i][j] = num++;
             }
         }
         
-        int[] answer = new int[queries.length];
-        
-        for (int i = 0; i < queries.length; i++){
-            answer[i] = rotate(queries[i]);
+        for (int[] query : queries){
+            answer.add(rotate(query));
+            
+            // // 출력
+            // for (int i = 1; i <= rows; i++){
+            //     for (int j = 1; j <= columns; j++){
+            //         System.out.print(map[i][j] + " ");
+            //     }
+            //     System.out.println();
+            // }
         }
-        return answer;
+        
+        return answer.stream().mapToInt(i -> i).toArray();
     }
 }
