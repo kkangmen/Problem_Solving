@@ -3,23 +3,23 @@ import java.util.*;
 class Solution {
     public int[] solution(int n, long k) {
         int[] answer = new int[n];
-         // 숫자 배열
-        List<Integer> list = new ArrayList<>();
         
-        long nFact = 1L;
+        long num = 1;
+        List<Integer> arr = new ArrayList<>();
         for (int i = 1; i <= n; i++){
-            nFact *= i;
-            list.add(i);
+            num *= i;
+            arr.add(i);
         }
         
         k--;
-        for (int i = n; i > 0; i--){
+        int index = 0;
+        while (n > 0){
+            num /= n;
+            int arrIndex = (int)(k / num);
+            k = k % num;
+            n--;
             
-            nFact /= i;
-            int index = (int)(k / nFact);
-            
-            answer[n-i] = list.remove(index);
-            k %= nFact;
+            answer[index++] = arr.remove(arrIndex);
         }
         return answer;
     }
