@@ -7,18 +7,11 @@ class Solution {
         Arrays.sort(A);
         Arrays.sort(B);
         
-        int index = 0;
-        for (int i = 0; i < A.length;){
-            if (index == B.length){
-                break;
-            }
+        for (int i = 0; i < B.length; i++){
+            int num = B[i];
             
-            if (A[i] < B[index]){
+            if (A[answer] < num){
                 answer++;
-                i++;
-                index++;
-            } else {
-                index++;
             }
         }
         return answer;
