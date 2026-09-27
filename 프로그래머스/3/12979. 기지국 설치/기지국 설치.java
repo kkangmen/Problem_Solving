@@ -3,22 +3,28 @@ import java.util.*;
 class Solution {
     public int solution(int n, int[] stations, int w) {
         int answer = 0;
-    
-        int curSpot = 1;
-        int width = w*2 + 1;
-        for (int station : stations){
-            int gap = (station-w) - curSpot;
-            
-            answer += (gap + (width-1)) / width;
-            curSpot = station + w + 1;
-        }
-        // System.out.println(answer);
+
+        List<Integer> gap = new ArrayList<>();
         
-        if (curSpot <= n){
-            // System.out.println("마지막");
-            int gap = n - curSpot + 1;
+        int start = 1;
+        for (int station : stations){
             
-            answer += (gap + (width-1))/width;
+            int station_start = (station-w >= 1) ? station-w : 1;
+            int station_end = (station+w <= n) ? station+w : n;
+            
+            if (station_start - start > 0){
+                gap.add(station_start-start);
+            }
+            
+            start = station_end+1;
+        }
+        if (start <= n){
+            gap.add(n+1 - start);            
+        }
+        
+        int cover = 2*w+1;
+        for (int i : gap){
+            answer += (i-1)/cover + 1;
         }
         return answer;
     }
