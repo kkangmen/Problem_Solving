@@ -2,22 +2,21 @@ import java.util.*;
 
 class Solution {
     public int[] solution(int n, int s) {
-        int[] answer = new int[n];
         
         if (n > s){
-            answer = new int[1];
-            answer[0] = -1;
-            return answer;
+            return new int[]{-1};
         }
         
-        Arrays.fill(answer, s/n);
+        int[] answer = new int[n];
         
-        int remainder = s%n;
+        int quot = s/n;
+        int remain = s%n;
         
-        for (int i = n-1; i > n-1-remainder; i--){
-            answer[i]++;
+        Arrays.fill(answer, quot);
+        
+        for (int i = 0; i < remain; i++){
+            answer[n-i-1]++;
         }
-        
         return answer;
     }
 }
