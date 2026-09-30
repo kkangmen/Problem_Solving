@@ -2,39 +2,38 @@ import java.util.*;
 
 class Solution {
     
-    String[][] priorities = new String[][]{
+    public String[][] operation = {
         {"*", "+", "-"},
         {"*", "-", "+"},
         {"+", "*", "-"},
         {"+", "-", "*"},
-        {"-", "+", "*"},
-        {"-", "*", "+"}
+        {"-", "*", "+"},
+        {"-", "+", "*"}
     };
-   
-    public Long apply(Long num1, Long num2, String op){
-        switch (op){
-            case "+": return num1+num2;
-            case "-": return num1-num2;
-            default: return num1*num2;
-        }    
+    
+    public long execute(long num1, long num2, String operator){
+        switch(operator){
+            case ("*"): return num1*num2;
+            case ("+"): return num1+num2;
+            default: return num1-num2;
+        }
     }
     
-    public List<String> calculate(List<String> tokens, String op){
+    public List<String> calculate(List<String> copy, String operator){
         Stack<String> s = new Stack<>();
         
-        for (int i = 0; i < tokens.size(); i++){
-            String token = tokens.get(i);
-            // 연산자가 일치하면
-            if (token.equals(op)){
-                Long num1 = Long.parseLong(s.pop());
-                Long num2 = Long.parseLong(tokens.get(++i));
-                s.push(String.valueOf(apply(num1, num2, op)));
+        for (int i = 0; i < copy.size(); i++){
+            String token = copy.get(i);
+            
+            if (token.equals(operator)){
+                long num1 = Long.parseLong(s.pop());
+                long num2 = Long.parseLong(copy.get(++i));
+                s.push(String.valueOf(execute(num1, num2, token)));
             } else {
                 s.push(token);
             }
         }
         
-        // 해당 연산자로 계산한 것들을 다시 반환
         List<String> result = new ArrayList<>(s);
         return result;
     }
@@ -42,30 +41,34 @@ class Solution {
     public long solution(String expression) {
         long answer = 0;
         
-        List<String> tokens = new ArrayList<>();
-        StringBuilder num = new StringBuilder();
-        for (char ch : expression.toCharArray()){
-            
-            // 숫자라면
-            if ('0' <= ch && ch <= '9'){
-                num.append(String.valueOf(ch));
-            } else {
-                tokens.add(num.toString());
-                num.setLength(0);
-                tokens.add(String.valueOf(ch));
-            }
-        }
-        tokens.add(num.toString());
+        // 연산자 분리
+        List<String> express = new ArrayList<>();
         
-        for (String[] priority : priorities){
-            List<String> copy = new ArrayList<>(tokens);
+        StringBuilder sb = new StringBuilder();
+        for (char ch : expression.toCharArray()){
+            if (Character.isDigit(ch)){
+                sb.append(ch);
+            } else {
+                express.add(sb.toString());
+                sb.setLength(0);
+                express.add(String.valueOf(ch));
+            }
+        }
+        express.add(sb.toString());
+        
+        // 각 operation마다 반복
+        for (String[] oper : operation){
             
-            for (String op : priority){
-                copy = calculate(copy, op);
+            List<String> copy = new ArrayList<>(express);
+            
+            for (String operator : oper){
+                copy = calculate(copy, operator);
             }
             
-            answer = Math.max(answer, Math.abs(Long.parseLong(copy.get(0))));
+            // 정답 최신화
+            answer = Math.max(answer, Math.abs(Long.parseLong(copy.getFirst())));
         }
+        
         return answer;
     }
 }
