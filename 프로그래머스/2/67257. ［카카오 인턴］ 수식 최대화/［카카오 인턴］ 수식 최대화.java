@@ -34,8 +34,7 @@ class Solution {
             }
         }
         
-        List<String> result = new ArrayList<>(s);
-        return result;
+        return new ArrayList<>(s);
     }
     
     public long solution(String expression) {
