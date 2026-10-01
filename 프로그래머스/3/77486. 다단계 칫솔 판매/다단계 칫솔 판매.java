@@ -22,7 +22,7 @@ class Solution {
             int enrollIndex = enrollList.indexOf(seller[i]);
             int sum = amount[i]*100;
             
-            while (true){
+            while (sum > 0){
                 if (enrollIndex == parent[enrollIndex]){
                     answer[enrollIndex] += sum - (sum/10);
                     // System.out.println("i: " + enrollIndex + " 추가: " + Math.round(sum*0.9));
