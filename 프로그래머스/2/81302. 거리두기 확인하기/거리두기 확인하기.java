@@ -2,97 +2,64 @@ import java.util.*;
 
 class Solution {
     
-    String[][] map;
+    Queue<int[]> q = new LinkedList<>();
+    boolean[][] isVisited;
     int[] dx = {0, 1, 0, -1};
     int[] dy = {1, 0, -1, 0};
     
-    public boolean isPossible2(int dir, int row, int col){
-        boolean flag = true;
-        int[] dx2;
-        int[] dy2;
+    public boolean isPossible(String[] place, int row, int col){
         
-        // 오른쪽
-        if (dir == 0){
-            dx2 = new int[]{-1, 0, 1};
-            dy2 = new int[]{0, 1, 0};
-        } else if (dir == 1){ // 아래
-            dx2 = new int[]{0, 1, 0};
-            dy2 = new int[]{1, 0, -1};
-        } else if (dir == 2){ // 왼쪽
-            dx2 = new int[]{1, 0, -1};
-            dy2 = new int[]{0, -1, 0};
-        } else { // 위
-            dx2 = new int[]{0, -1, 0};
-            dy2 = new int[]{-1, 0, 1};
-        }
+        q.offer(new int[]{row, col, 0});    
+        isVisited[row][col] = true;
         
-        for (int i = 0; i < 3; i++){
-            int nx = row + dx2[i];
-            int ny = col + dy2[i];
+        while (!q.isEmpty()){
+            int[] node = q.poll();
+            // System.out.println("row: " + node[0] + " col: " + node[1]);
+            if (node[2] == 2){
+                continue;
+            }
             
-            if (0 <= nx && nx < 5 && 0 <= ny && ny < 5){
-                if (map[nx][ny].equals("P")){
-                    flag = false;
+            for (int i = 0; i < 4; i++){
+                int nx = node[0] + dx[i];
+                int ny = node[1] + dy[i];
+                
+                if (0 <= nx && nx < 5 && 0 <= ny && ny < 5){
+                    if (place[nx].charAt(ny) == 'O' && !isVisited[nx][ny]){
+                        q.offer(new int[]{nx, ny, node[2]+1});
+                        isVisited[nx][ny] = true;
+                    }
+                    if (place[nx].charAt(ny) == 'P' && !isVisited[nx][ny]){
+                        return false;
+                    }
                 }
             }
         }
-        return flag;
+        return true;
     }
     
-    public boolean isPossible(int row, int col){
-        boolean flag = true;
-        // 1단계 파티션일 경우, 
-        for (int i = 0; i < 4; i++){
-            int nx = row + dx[i];
-            int ny = col + dy[i];
-            
-            if (0 <= nx && nx < 5 && 0 <= ny && ny < 5){
-                if (map[nx][ny].equals("X")){
-                    continue;
-                }
-                if (map[nx][ny].equals("P")){
-                    flag = false;
-                    return flag;
-                }
-                // 2단계: 1단계가 'O'여서 다음 단계를 확인
-                if(!isPossible2(i, nx, ny)){
-                    flag = false;
-                    return flag;
-                }
-            }
-        }
-        return flag;
-    }
-    
-    public int[] solution(String[][] places) {
-        int[] answer = new int[5];
+    public List<Integer> solution(String[][] places) {
+        List<Integer> answer = new ArrayList<>();
         
-        for (int i = 0; i < 5; i++){
+        for (String[] place : places){
+    
             boolean flag = true;
-            String[] place = places[i];
-            map = new String[5][5];
-            
-            for (int j = 0; j < 5; j++){
-                String s = place[j];
-                for (int k = 0; k < 5; k++){
-                    map[j][k] = String.valueOf(s.charAt(k));
-                }
-            }
-            
-            for (int row = 0; row < 5; row++){
-                for (int col = 0; col < 5; col++){
-                    if (map[row][col].equals("P")){
-                        if (!isPossible(row, col)){
+            for (int i = 0; i < 5; i++){
+                for (int j = 0; j < 5; j++){
+                    if (place[i].charAt(j) == 'P'){
+                        q = new LinkedList<>();
+                        isVisited = new boolean[5][5];
+                        if (!isPossible(place, i, j)){
                             flag = false;
                         }
                     }
                 }
             }
             if (flag){
-                answer[i] = 1;
+                answer.add(1);
             } else {
-                answer[i] = 0;
+                answer.add(0);
             }
+            // System.out.println("다음");
         }
         return answer;
     }
