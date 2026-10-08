@@ -2,27 +2,26 @@ import java.util.*;
 
 class Solution {
     
-    List<int[]> answer = new ArrayList<>();
+    List<int[]> answer;
     
-    public void move(int n, int start, int end){
-        answer.add(new int[]{start, end});
-    }
-    
-    public void hanoi(int n, int start, int end, int via){
+    public void hanoi(int n, int from, int to, int temp){
         
         if (n == 1){
-            move(n, start, end);
+            answer.add(new int[]{from, to});
+            // System.out.println(n + "을 " + from + "에서 " + to + "로 이동.");
             return;
         }
         
-        hanoi(n-1, start, via, end);
-        move(n, start, end);
-        hanoi(n-1, via, end, start);
+        hanoi(n-1, from, temp, to);
+        answer.add(new int[]{from, to});
+        // System.out.println("move()함수: " + n + "을 " + from + "에서 " + to + "로 이동.");
+        hanoi(n-1, temp, to, from);
     }
     
-    public int[][] solution(int n) {
+    public List<int[]> solution(int n) {
+        answer = new ArrayList<>();
         
         hanoi(n, 1, 3, 2);
-        return answer.toArray(new int[0][]);
+        return answer;
     }
 }
