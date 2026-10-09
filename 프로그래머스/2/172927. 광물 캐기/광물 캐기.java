@@ -2,56 +2,65 @@ import java.util.*;
 
 class Solution {
     
-    int answer = Integer.MAX_VALUE;
-    
-    public int[][] cost = new int[][]{
+    int[][] value = new int[][]{
         {1, 1, 1},
         {5, 1, 1},
         {25, 5, 1}
     };
     
-    public int calculate(int index, int start, int end, String[] minerals){
+    int answer = Integer.MAX_VALUE;
+    
+    public int calculate(int pick, int start, int end, String[] minerals){
+        
         int sum = 0;
+        
         for (int i = start; i < end; i++){
-            switch(minerals[i]){
-                case "diamond":
-                    sum += cost[index][0];
+            switch (minerals[i]){
+                case "diamond": 
+                    sum += value[pick][0];
                     break;
                 case "iron":
-                    sum += cost[index][1];
+                    sum += value[pick][1];
                     break;
                 default:
-                    sum += cost[index][2];
+                    sum += value[pick][2];
             }
         }
+        
+        // System.out.println("start: " + start + " end: " + end + " sum: " + sum);
         return sum;
     }
     
-    public void dfs(int[] picks, int mineralIdx, String[] minerals, int sum){
-        // System.out.println("dfs: " + "mineralIdx=" + mineralIdx + " sum= " + sum);
+    public void dfs(int[] picks, int index, String[] minerals, int maxIdx, int sum){
         
-        // 곡괭이가 더 이상 없거나, 광물을 다 캤으면 종료
-        if ((picks[0] == 0 && picks[1] == 0 && picks[2] == 0)
-           || mineralIdx == minerals.length){
-            answer = Math.min(answer, sum);
-            // System.out.println("return");
+        if (index == maxIdx){
+            answer = Math.min(answer, sum);    
+            // System.out.println("answer: " + answer);
             return;
         }
         
         for (int i = 0; i < picks.length; i++){
             if (picks[i] > 0){
-                // 곡괭이로 5개를 캐고 다음 dfs로
-                int end = Math.min(mineralIdx+5, minerals.length);
-                int totalCost = calculate(i, mineralIdx, end, minerals);
+                int start = index;
+                int end = Math.min(start+5, maxIdx);
+                int temp = calculate(i, start, end, minerals);
                 picks[i]--;
-                dfs(picks, end, minerals, sum+totalCost);
+                dfs(picks, end, minerals, maxIdx, sum+temp);
                 picks[i]++;
             }
         }
     }
     
     public int solution(int[] picks, String[] minerals) {
-        dfs(picks, 0, minerals, 0);
+        
+        int totalPick = 0;
+        for (int pick : picks){
+            totalPick += pick;
+        }
+        
+        int maxIdx = Math.min(totalPick*5, minerals.length);
+        dfs(picks, 0, minerals, maxIdx, 0);
+        
         return answer;
     }
 }
