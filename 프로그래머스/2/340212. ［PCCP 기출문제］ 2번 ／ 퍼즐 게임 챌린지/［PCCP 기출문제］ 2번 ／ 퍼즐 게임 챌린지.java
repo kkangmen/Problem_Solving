@@ -2,38 +2,31 @@ import java.util.*;
 
 class Solution {
     public int solution(int[] diffs, int[] times, long limit) {
-        int right = 0;
-        int left = 100001;
-        for (int i = 0; i < diffs.length; i++){
-            right = Math.max(right, diffs[i]);
-            left = Math.min(left, diffs[i]);
-        }
-        int answer = right;
-        int result = 1;
+        int answer = 0;
+        
+        int left = 1;
+        int right = 100000;
+        
         while (left <= right){
-            System.out.print("left = " + left + " ");
-            System.out.print("right = " + right + " ");
-            result = (left + right)/2;
+            int level = (left+right)/2;
+            // System.out.print("level = " + level);
             long sum = 0;
+            
             for (int i = 0; i < diffs.length; i++){
-                if (diffs[i] <= result){
+                if ((diffs[i] > level) && (i > 0)){
+                    sum += (times[i] + times[i-1]) * (diffs[i]-level) + times[i];
+                } else {
                     sum += times[i];
                 }
-                else {
-                    sum += (times[i-1] + times[i]) * (diffs[i] - result) + times[i];
-                }
             }
+            // System.out.println(" sum = " + sum);
             if (sum <= limit){
-                if (answer > result){
-                    answer = result;
-                }
-                right = result - 1;
-            }
-            else {
-                left = result + 1;
+                answer = level;
+                right = level - 1;
+            } else {
+                left = level + 1;
             }
         }
-        
         return answer;
     }
 }
