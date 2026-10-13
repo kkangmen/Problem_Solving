@@ -4,14 +4,14 @@ class Solution {
     
     int[] parent;
     
-    public void union(int node1, int node2){
-        int parent1 = findParent(node1);
-        int parent2 = findParent(node2);
+    public void merge(int node1, int node2){
+        int a = findParent(node1);
+        int b = findParent(node2);
         
-        if (parent1 < parent2){
-            parent[parent2] = parent1;
+        if (a < b){
+            parent[b] = a;
         } else {
-            parent[parent1] = parent2;
+            parent[a] = b;
         }
     }
     
@@ -25,21 +25,19 @@ class Solution {
     public int solution(int n, int[][] costs) {
         int answer = 0;
         
-        // init
         parent = new int[n];
         for (int i = 0; i < n; i++){
             parent[i] = i;
         }
         
-        // sort
-        Arrays.sort(costs, (o1, o2) -> {
-            return o1[2] - o2[2];
-        });
-        
+        Arrays.sort(costs, (o1, o2) -> o1[2] - o2[2]);
+            
         for (int[] cost : costs){
+            
+            // 부모가 다르면 간선 추가 및 부모 통일
             if (findParent(cost[0]) != findParent(cost[1])){
-                union(cost[0], cost[1]);
                 answer += cost[2];
+                merge(cost[0], cost[1]);
             }
         }
         return answer;
