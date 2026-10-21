@@ -2,40 +2,53 @@ import java.util.*;
 
 class Solution {
     
-    public String convert(String s){
-        return s.replace("C#", "c")
+    public int time(String clock){
+        String[] arr = clock.split(":");
+        
+        return Integer.parseInt(arr[0])*60 + Integer.parseInt(arr[1]);
+    }
+    
+    public String convert(String sound){
+        return sound.replace("C#", "c")
             .replace("D#", "d")
             .replace("F#", "f")
             .replace("G#", "g")
             .replace("A#", "a");
     }
     
-    public int toTime(String s){
-        int hour = Integer.parseInt(s.split(":")[0]);
-        int min = Integer.parseInt(s.split(":")[1]);
-        
-        return hour*60 + min;
-    }
-    
     public String solution(String m, String[] musicinfos) {
-        String answer = "(None)";
-        int maxDuration = 0;
+        String answer = "";
         
+        int candidate = 0;
+        
+        // m의 C# 같은거는 소문자 c로 바꾼다.
         m = convert(m);
         
-        for (String musicinfo : musicinfos){
-            String[] arr = musicinfo.split(",");
-            int duration = toTime(arr[1]) - toTime(arr[0]);
+        // 각 음악 정보마다
+        for (int i = 0; i < musicinfos.length; i++){
+            String musicInfo = musicinfos[i];
+            
+            // 해당 음악을 title, melody, latency로 나눈다.
+            // 이때 melody의 C# 같은거는 소문자 c로 바꾼다.
+            String[] arr = musicInfo.split(",");
             String title = arr[2];
-            String music = convert(arr[3]);
+            String melody = convert(arr[3]);
+            int latency = time(arr[1]) - time(arr[0]);
             
-            music = music.repeat(duration/music.length()) + 
-                music.substring(0, duration%music.length());
+            // latency 만큼 melody를 반복해서 늘린다.
+            int quot = latency / melody.length();
+            int remain = latency % melody.length();
+            String totalMelody = melody.repeat(quot) + melody.substring(0, remain);
             
-            if (music.contains(m) && duration > maxDuration){
+            // melody.contains(m)이고 기존 latency보다 길다면 최신화한다.
+            if (totalMelody.contains(m) && candidate < latency){
                 answer = title;
-                maxDuration = duration;
+                candidate = latency;
             }
+        }
+        
+        if (candidate == 0){
+            return "(None)";
         }
         return answer;
     }
