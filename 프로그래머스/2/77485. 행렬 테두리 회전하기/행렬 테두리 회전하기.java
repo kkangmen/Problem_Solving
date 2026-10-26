@@ -21,35 +21,31 @@ class Solution {
             int y2 = query[3]-1;
         
             int temp = graph[x1][y1];
-            List<Integer> numArr = new ArrayList<>();
-            numArr.add(temp);
+            int min = temp;
             
             // 좌 x2-x1만큼, y1 고정, x1 -> x2
             for (int row = x1; row < x2; row++){
                 graph[row][y1] = graph[row+1][y1];
-                numArr.add(graph[row][y1]);
+                min = Math.min(min, graph[row][y1]);
             }
             // 하 y2-y1만큼, x2 고정, y1 -> y2
             for (int col = y1; col < y2; col++){
                 graph[x2][col] = graph[x2][col+1];
-                numArr.add(graph[x2][col]);
+                min = Math.min(min, graph[x2][col]);
             }
             // 우 좌만큼, y2 고정, x2 -> x1
             for (int row = x2; row > x1; row--){
                 graph[row][y2] = graph[row-1][y2];
-                numArr.add(graph[row][y2]);
+                min = Math.min(min, graph[row][y2]);
             }
             // 상 하만큼, x1 고정, y2 -> y1
             for (int col = y2; col > y1; col--){
                 graph[x1][col] = graph[x1][col-1];
-                numArr.add(graph[x1][col]);
+                min = Math.min(min, graph[x1][col]);
             }
             
             graph[x1][y1+1] = temp;
-            
-            // 정렬 후 값이 가장 작은 거 확인
-            Collections.sort(numArr);
-            answer[q] = numArr.get(0);
+            answer[q] = min;
         }
         return answer;
     }
