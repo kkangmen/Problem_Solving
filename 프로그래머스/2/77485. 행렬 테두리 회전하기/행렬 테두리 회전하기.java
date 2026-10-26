@@ -1,70 +1,56 @@
 import java.util.*;
-
 class Solution {
-    
-    int[][] map;
-    
-    public int rotate(int[] query){
-        int x1 = query[0];
-        int y1 = query[1];
-        int x2 = query[2];
-        int y2 = query[3];
-        
-        int temp = map[x1][y1];
-        int min = temp;
-        
-        // 좌측
-        for (int i = x1; i < x2; i++){
-            map[i][y1] = map[i+1][y1];
-            min = Math.min(min, map[i][y1]);
-        }
-        
-        // 하단
-        for (int i = y1; i < y2; i++){
-            map[x2][i] = map[x2][i+1];
-            min = Math.min(min, map[x2][i]);
-        }
-        
-        // 우측
-        for (int i = x2; i > x1; i--){
-            map[i][y2] = map[i-1][y2];
-            min = Math.min(min, map[i][y2]);
-        }
-        
-        // 상단
-        for (int i = y2; i > y1; i--){
-            map[x1][i] = map[x1][i-1];
-            min = Math.min(min, map[x1][i]);
-        }
-        
-        map[x1][y1+1] = temp;
-        return min;
-    }
-    
     public int[] solution(int rows, int columns, int[][] queries) {
-        List<Integer> answer = new ArrayList<>();
+        int[] answer = new int[queries.length];
         
-        // init
-        map = new int[rows+1][columns+1];
-        int num = 1;
-        for (int i = 1; i <= rows; i++){
-            for (int j = 1; j <= columns; j++){
-                map[i][j] = num++;
+        // graph 초기화
+        int[][] graph = new int[rows][columns];
+        int num = 0;
+        for (int i = 0; i < rows; i++){
+            for (int j = 0; j < columns; j++){
+                graph[i][j] = ++num;
             }
         }
         
-        for (int[] query : queries){
-            answer.add(rotate(query));
-            
-            // // 출력
-            // for (int i = 1; i <= rows; i++){
-            //     for (int j = 1; j <= columns; j++){
-            //         System.out.print(map[i][j] + " ");
-            //     }
-            //     System.out.println();
-            // }
-        }
+        // 각 queries마다
+        for (int q = 0; q < queries.length; q++){
+            int[] query = queries[q];
+            int x1 = query[0]-1;
+            int y1 = query[1]-1;
+            int x2 = query[2]-1;
+            int y2 = query[3]-1;
         
-        return answer.stream().mapToInt(i -> i).toArray();
+            int temp = graph[x1][y1];
+            List<Integer> numArr = new ArrayList<>();
+            numArr.add(temp);
+            
+            // 좌 x2-x1만큼, y1 고정, x1 -> x2
+            for (int row = x1; row < x2; row++){
+                graph[row][y1] = graph[row+1][y1];
+                numArr.add(graph[row][y1]);
+            }
+            // 하 y2-y1만큼, x2 고정, y1 -> y2
+            for (int col = y1; col < y2; col++){
+                graph[x2][col] = graph[x2][col+1];
+                numArr.add(graph[x2][col]);
+            }
+            // 우 좌만큼, y2 고정, x2 -> x1
+            for (int row = x2; row > x1; row--){
+                graph[row][y2] = graph[row-1][y2];
+                numArr.add(graph[row][y2]);
+            }
+            // 상 하만큼, x1 고정, y2 -> y1
+            for (int col = y2; col > y1; col--){
+                graph[x1][col] = graph[x1][col-1];
+                numArr.add(graph[x1][col]);
+            }
+            
+            graph[x1][y1+1] = temp;
+            
+            // 정렬 후 값이 가장 작은 거 확인
+            Collections.sort(numArr);
+            answer[q] = numArr.get(0);
+        }
+        return answer;
     }
 }
