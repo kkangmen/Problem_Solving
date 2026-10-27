@@ -1,43 +1,45 @@
 import java.util.*;
 
 class Solution {
-    
-    public boolean possible(int n, int[] times, long mid){
-        long count = 0;
-        
+    public long count(long mid, int[] times){
+        long cnt = 0;
         for (int time : times){
-            count += mid / (long)time;
+            cnt += mid / time;
         }
-        
-        if ((long)n <= count){
-            return true;
-        } else {
-            return false;
-        }
+        return cnt;
     }
     
     public long solution(int n, int[] times) {
         long answer = 0;
         
-        
+        // 이분탐색
+        // 30분 -> 4 + 3 = 7
+        // 28분 -> 4 + 2 = 6
         long left = 1;
-        long right = 0;
+        
+        long max = 1;
         for (int time : times){
-            right = Math.max(right, time);
+            max = Math.max(max, (long)time);
         }
-        right = right*n;
+        long right = max*n;
         
         while (left <= right){
             long mid = (left+right)/2;
+            // System.out.println(mid);
+            long cnt = count(mid, times);
             
-            // 가능한경우
-            if (possible(n, times, mid)){
-                answer = mid;
+            // n보다 가능하고 크거나 같으면 더 줄여도 된다는 뜻.
+            if (cnt >= n){
                 right = mid-1;
-            } else {
+                answer = mid;
+            }
+        
+            // n보다 작으면 시간 더 늘려야.
+            else {
                 left = mid+1;
             }
         }
+        
         return answer;
     }
 }
