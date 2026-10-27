@@ -17,11 +17,8 @@ class Solution {
         // 28분 -> 4 + 2 = 6
         long left = 1;
         
-        long max = 1;
-        for (int time : times){
-            max = Math.max(max, (long)time);
-        }
-        long right = max*n;
+        int max = Arrays.stream(times).max().getAsInt();
+        long right = (long)max*n;
         
         while (left <= right){
             long mid = (left+right)/2;
