@@ -1,57 +1,58 @@
 import java.util.*;
-
 class Solution {
     
-    public class Info {
-        String genre;
-        int play;
-        Info(String genre, int play){
-            this.genre = genre;
-            this.play = play;
+    class Song {
+        int num;
+        int plays;
+        Song (int num, int plays){
+            this.num = num;
+            this.plays = plays;
         }
     }
     
-    List<Info> list = new LinkedList<>();
-    
-    public List<Integer> solution(String[] genres, int[] plays) {
-        List<Integer> answer = new LinkedList<>();
+    public int[] solution(String[] genres, int[] plays) {
+        List<Integer> answer = new ArrayList<>();
         
-        Map<String, Integer> map = new HashMap<>();
+        // Map<장르, 총수록곡> 삽입
+        // Map<장르, List<Song>> 삽입
+        Map<String, Integer> genreMap = new HashMap<>();
+        Map<String, List<Song>> songMap = new HashMap<>();
+        
         for (int i = 0; i < genres.length; i++){
-            map.put(genres[i], map.getOrDefault(genres[i], 0) + plays[i]);
+            genreMap.put(genres[i], genreMap.getOrDefault(genres[i], 0) + plays[i]);
+            
+            if (!songMap.containsKey(genres[i])){
+                songMap.put(genres[i], new ArrayList<>());
+            }
+            
+            songMap.get(genres[i]).add(new Song(i, plays[i]));
         }
-        
-        for (String s : map.keySet()){
-            list.add(new Info(s, map.get(s)));
-        }
-        
-        Collections.sort(list, (o1, o2) -> {
-            return o2.play - o1.play;
+
+        // 장르맵의 키를 장르리스트로 만들어 정렬한다.
+        List<String> genreList = new ArrayList<>(genreMap.keySet());
+        Collections.sort(genreList, (o1, o2) -> {
+            return Integer.compare(genreMap.get(o2), genreMap.get(o1));
         });
         
-        for (int i = 0; i < list.size(); i++){
-            String s = list.get(i).genre;
-            List<int[]> compare = new LinkedList<>();
+        // 장르리스트 순서대로
+        for (int i = 0; i < genreList.size(); i++){
+            // get해와서 List를 또 정렬
+            List<Song> songList = songMap.get(genreList.get(i));
             
-            for (int j = 0; j < genres.length; j++){
-                if (s.equals(genres[j])){
-                    compare.add(new int[]{plays[j], j});
-                }
+            if (songList.size() == 1){
+                answer.add(songList.get(0).num);
             }
             
-            Collections.sort(compare, (o1, o2) -> {
-                if (o2[0] == o1[0]){
-                    return o1[1] - o2[1];
-                }
-                return o2[0]- o1[0];
-            });
-            
-            int index = 0;
-            while (index < 2 && index != compare.size()){
-                answer.add(compare.get(index)[1]);
-                index++;
+            else {
+                Collections.sort(songList, (o1, o2) -> {
+                    return Integer.compare(o2.plays, o1.plays);
+                });
+                answer.add(songList.get(0).num);
+                answer.add(songList.get(1).num);
             }
+            // size가 1이라면 그대로 정답에 넣고
+            // size가 2이상이면 맨앞 2개만 정답에 넣는다.
         }
-        return answer;
+        return answer.stream().mapToInt(i->i).toArray();
     }
 }
