@@ -1,0 +1,19 @@
+import java.io.*;
+import java.util.*;
+
+class Main {
+	public static void main(String[] args) throws Exception {
+		BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
+		String input = br.readLine();
+		List<String> list = new ArrayList<>();
+
+		for (char ch : input.toCharArray()){
+			list.add(String.valueOf(ch));
+		}
+
+		System.out.println(Collections.frequency(list, "1"));
+		System.out.println(Collections.frequency(list, "I"));
+		System.out.println(Collections.frequency(list, "l"));
+		System.out.println(Collections.frequency(list, "|"));
+	}
+}
