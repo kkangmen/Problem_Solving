@@ -3,55 +3,54 @@ import java.util.StringTokenizer;
 
 public class p1210 {
 
-    static int[][] graph;
-    static boolean flag;
+    static int[][] map;
 
-    public static int dfs(int row, int col){
-
-        // 종료 조건 = 행이 0이면 해당 열 리턴
-        if (row == 0){
-            return col;
+    static int goUp(int x, int y){
+        // 만약 행이 0이 되면 그때의 y좌표를 반환한다.
+        if (x == 0){
+            return y;
         }
-        // 좌 우에 1이 있다면 이동
-        if (col - 1 >= 0 && graph[row][col-1] == 1){
-            while (col-1 >= 0 && graph[row][col-1] == 1){
-                col--;
+        // 왼쪽에 1, 다리가 존재하면 이동 (1이 나오면 지속)
+        if (y > 0 && map[x][y-1] == 1){
+            while (0 < y && map[x][y-1] == 1){
+                y--;
             }
         }
-        else if (col + 1 < 100 && graph[row][col+1] == 1){
-            while (col+1 < 100 && graph[row][col+1] == 1){
-                col++;
+        // 오른쪽에 1, 다리가 존재하면 이동
+        else if (y < 99 && map[x][y+1] == 1){
+            while (y < 99 && map[x][y+1] == 1){
+                y++;
             }
         }
-        // 위로 이동ㅇ
-        return dfs(row-1, col);
+        // 계속 위로 이동한다.
+        return goUp(x-1, y);
     }
 
-    public static void main(String[] args) throws IOException {
+    public static void main(String[] args) throws Exception
+    {
 
         BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
 
         for (int test_case = 1; test_case <= 10; test_case++) {
 
-            // 테스트 케이스 번호 입력
-            int num = Integer.parseInt(br.readLine());
-            // 100x100 만큼 입력 받아 graph에 저장
-            graph = new int[100][100];
-            for (int i = 0; i < 100; i++) {
+            int tc = Integer.parseInt(br.readLine());
+            int answer = 0;
+            // 100*100 배열을 생성하고 값 입력
+            map = new int[100][100];
+            for (int i = 0; i < 100; i++){
                 StringTokenizer st = new StringTokenizer(br.readLine());
                 for (int j = 0; j < 100; j++){
-                    graph[i][j] = Integer.parseInt(st.nextToken());
+                    map[i][j] = Integer.parseInt(st.nextToken());
                 }
             }
 
-            // 마지막 행을 순회하면서
-            int answer = 0;
-            for (int col = 0; col < 100; col++) {
-                // 만약 해당 값이 2라면 탐색 시작
-                if (graph[99][col] == 2){
-                    answer = dfs(99, col);
+            // 맨 아래 행에서 2가 나오면 위로 올라간다.
+            for (int j = 0; j < 100; j++){
+                if (map[99][j] == 2){
+                    answer = goUp(99, j);
                 }
             }
+
             System.out.println("#" + test_case + " " + answer);
         }
     }
