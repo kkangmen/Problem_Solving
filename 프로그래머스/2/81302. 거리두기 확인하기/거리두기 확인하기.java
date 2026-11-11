@@ -1,75 +1,78 @@
-// P - 앉아있는 자리
-// O - 빈테이블
-// X - 파티션
-
 import java.util.*;
 
 class Solution {
     
+    char[][] map = new char[5][5];
     int[] dx = {0, 1, 0, -1};
     int[] dy = {1, 0, -1, 0};
     
-    public boolean bfs(int x, int y, String[] place){
-        boolean flag = true;
-        // isvisted 초기화
-        boolean[][] isVisited = new boolean[5][5];
-        // 해당 좌표와 거리 정보를 q에 담는다.
+    public boolean bfs(int x, int y){
         Queue<int[]> q = new LinkedList<>();
+        // 큐에 현재 위치와 거리정보(0) 삽입
         q.offer(new int[]{x, y, 0});
+        // isVisited도 생성
+        boolean[][] isVisited = new boolean[5][5];
         isVisited[x][y] = true;
-        
-        // q가 빌 때까지
+        // 큐가 빌때까지
         while (!q.isEmpty()){
-            // 좌표 pop
+            // 큐 poll
             int[] curNode = q.poll();
-            // System.out.println("현재 노드: " + "x = " + curNode[0] + " y = " + curNode[1]);
+            // poll 위치의 거리가 2이내라면
+            if (curNode[2] >= 2){
+                continue;
+            }
+            
             for (int i = 0; i < 4; i++){
                 int nx = curNode[0] + dx[i];
                 int ny = curNode[1] + dy[i];
-                int dist = curNode[2];
                 
-                // 거리가 2 미만이고, 
-                if (0 <= nx && nx < 5 && 0 <= ny && ny < 5 && dist < 2){
-                    // 만약 새로운 가능한 좌표가 'O'라면 큐에 넣는다.
-                    if (!isVisited[nx][ny] && place[nx].charAt(ny) == 'O'){
+                if (0 <= nx && nx < 5 && 0 <= ny && ny < 5 && !isVisited[nx][ny]){
+                // 만약 새로운 위치가 'P'라면 중단 false 리턴
+                    if (map[nx][ny] == 'P'){
+                        return false;
+                    }
+                // 만약 새로운 위치가 'O'라면 큐에 삽입 (거리 1 추가)
+                    if (map[nx][ny] == 'O'){
+                        q.offer(new int[]{nx, ny, curNode[2]+1});
                         isVisited[nx][ny] = true;
-                        q.offer(new int[]{nx, ny, dist+1});
-                    } 
-                    // 만약 새로운 가능한 좌표가 'P'라면 중단하고 false를 리턴한다.
-                    else if (!isVisited[nx][ny] && place[nx].charAt(ny) == 'P'){
-                        flag = false;
-                        break;                        
                     }
                 }
-            } 
+            }
         }
-        return flag;
+        return true;
     }
     
     public int[] solution(String[][] places) {
         int[] answer = new int[places.length];
         
-        // 각 places 마다
-        for (int room = 0; room < places.length; room++){
-            String[] place = places[room];
-            // 해당 대기실을 살펴보면서
+        // 각 places마다
+        for (int p = 0; p < places.length; p++){
             boolean flag = true;
+            String[] place = places[p];
+            // 5*5 크기 map에 삽입
             for (int i = 0; i < 5; i++){
                 for (int j = 0; j < 5; j++){
-                    // 해당 자리에 사람이 있다면 -> bfs 시작
-                    if (place[i].charAt(j) == 'P' && !bfs(i,j, place)){
-                        // System.out.println("i= " + i + " j= " + j + " 불가능");
+                    map[i][j] = place[i].charAt(j);
+                }
+            }
+            // 이중 for문을 통해
+            for (int i = 0; i < 5; i++){
+                for (int j = 0; j < 5; j++){
+                // 해당 자리가 p라면 bfs시작
+                    if (map[i][j] == 'P' && !bfs(i, j)){
                         flag = false;
                         break;
                     }
                 }
-                if (!flag){
-                    break;
-                }
-            }  
-            answer[room] = (flag == true) ? 1 : 0;
+            }
+            
+            // 끝까지 완료했다면 1
+            if (flag){
+                answer[p] = 1;
+            } else {
+                answer[p] = 0;
+            }
         }
-                 
         return answer;
     }
 }

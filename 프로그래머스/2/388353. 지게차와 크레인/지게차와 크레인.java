@@ -2,88 +2,89 @@ import java.util.*;
 
 class Solution {
     
+    char[][] map;
     int[] dx = {0, 1, 0, -1};
     int[] dy = {1, 0, -1, 0};
-    char[][] grid;
+    int row = 0; int col = 0;
     
-    public List<int[]> bfs(char request, int row, int col){
+    public void bfs(char ch){
         Queue<int[]> q = new LinkedList<>();
-        boolean[][] isVisited = new boolean[row][col];
-        List<int[]> removedList = new ArrayList<>();
-        
+        boolean[][] isVisited = new boolean[row+2][col+2];
+        // (0,0) 삽입
         q.offer(new int[]{0,0});
         isVisited[0][0] = true;
         
+        // 큐가 빌 때까지
         while (!q.isEmpty()){
-            int[] node = q.poll();
+            int[] curNode = q.poll();
             for (int i = 0; i < 4; i++){
-                int nx = node[0] + dx[i];
-                int ny = node[1] + dy[i];
-                if (0 <= nx && nx < row && 0 <= ny && ny < col
-                   && !isVisited[nx][ny]){
-                   if (grid[nx][ny] == '.'){
-                    q.offer(new int[]{nx, ny});
-                    isVisited[nx][ny] = true;
-                   } else if (grid[nx][ny] == request){
-                        removedList.add(new int[]{nx, ny});
-                       isVisited[nx][ny] = true;
+                int nx = curNode[0] + dx[i];
+                int ny = curNode[1] + dy[i];
+                
+                if (0 <= nx && nx < row+2 && 0 <= ny && ny < col+2){
+                    // 만약 '-'라면 큐에 추가
+                    if (map[nx][ny] == '-' && !isVisited[nx][ny]){
+                        isVisited[nx][ny] = true;
+                        q.offer(new int[]{nx, ny});
+                    }
+                    // 만약 '찾는 문자라면' 해당 칸을 '-'로 바꾼다.
+                    if (map[nx][ny] == ch && !isVisited[nx][ny]){
+                        isVisited[nx][ny] = true;
+                        map[nx][ny] = '-';
                     }
                 }
             }
         }
-        return removedList;
     }
     
     public int solution(String[] storage, String[] requests) {
         int answer = 0;
-        int row = storage.length;
-        int col = storage[0].length();
         
-        // 격자판에 1 패딩을 적용한다.
-        grid = new char[row+2][col+2];
+        row = storage.length;
+        col = storage[0].length();
+        // map 선언 및 storage를 map에 삽입
+        // 이때 크기 1 패딩을 추가한다.
+        map = new char[row+2][col+2];
         for (int i = 0; i < row+2; i++){
-            Arrays.fill(grid[i], '.');
-        }
-        for (int i = 0; i < storage.length; i++){
-            for (int j = 0; j < storage[i].length(); j++){
-                grid[i+1][j+1] = storage[i].charAt(j);
-            }
-        }
-        
-        // 각 명령마다
-        for (int r = 0; r < requests.length; r++){
-            String request = requests[r];
-            // System.out.println(r + "번째");
-            // 만약 길이가 1이면
-            if (request.length() == 1){
-                // (0,0)부터 시작하는 bfs를 통해 인접한 노드의 
-                // 단어와 일치하면 해당 노드를 리스트에 담아
-                // .으로 바꾼다.
-                List<int[]> removeList = new ArrayList<>();
-                removeList = bfs(request.charAt(0), row+2, col+2);
-                
-                for (int[] node : removeList){
-                    // System.out.println("지워할 위치=" + " x:" + node[0] + " y: " + node[1]);
-                    grid[node[0]][node[1]] = '.';
+            for (int j = 0; j < col+2; j++){
+                if (i == 0 || j == 0 || i == row+1 || j == col+1){
+                    map[i][j] = '-';
+                } else {
+                    map[i][j] = storage[i-1].charAt(j-1);
                 }
             }
+        }
         
-            // 만약 길이가 2이면
-            else {
-                // 2중 반복문을 통해 해당 문자를 .으로 바꾼다.
-                for (int i = 0; i < row+2; i++){
-                    for (int j = 0; j < col+2; j++){
-                        if (grid[i][j] == request.charAt(0)){
-                            grid[i][j] = '.';
+        // 각 request 마다
+        for (String request : requests){
+            // 만약 한글자라면
+            if (request.length() == 1){
+                // (0,0)부터 bfs 시작
+                bfs(request.charAt(0));
+            } else {
+            // 만약 두 글자라면
+                // map 전체 순회하여 해당 문자를 전부 '-'로 바꿈.
+                for (int i = 1; i < row+1; i++){
+                    for (int j = 1; j < col+1; j++){
+                        if (map[i][j] == request.charAt(0)){
+                            map[i][j] = '-';
                         }
                     }
                 }
             }
+            
+            // 출력
+            // for (int i = 0; i < row+2; i++){
+            //     for (int j = 0; j < col+2; j++){
+            //         System.out.print(map[i][j] + " ");
+            //     }
+            //     System.out.println();
+            // }
         }
-        
-        for (int i = 1; i < row+1; i++){
-            for (int j = 1; j < col+1; j++){
-                if (grid[i][j] != '.'){
+        // 최종적으로 '-'가 아닌 갯수가 정답
+        for (int i = 0; i < row+2; i++){
+            for (int j = 0; j < col+2; j++){
+                if (map[i][j] != '-'){
                     answer++;
                 }
             }
@@ -91,4 +92,3 @@ class Solution {
         return answer;
     }
 }
-// 시간복잡도 100 * 50*50
